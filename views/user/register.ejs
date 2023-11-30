@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Page</title>
+    <!-- Bootstrap CSS CDN link -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .form-container {
+            max-width: 400px;
+            margin: 0 auto;
+            margin-top: 50px;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="form-container">
+            <h2>Register</h2>
+            <form id="registrationForm" action="/register" method="post" onsubmit="return validateForm()">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                    <span id="emailError" style="color: #c00; font-weight: bold;"></span>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input type="text" class="form-control" id="phone" name="phone" required>
+                    <span id="phoneError" style="color: #c00; font-weight: bold;"></span>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                    <span id="passwordError" style="color: #c00; font-weight: bold;"></span>
+                    <% if(typeof message !== "undefined") { %>
+                        <span style="color:#61ff61; font-weight: bold;"><%= message %></span>
+                    <% } %>
+                    <% if(typeof error !== 'undefined') { %>
+                        <span style="color: #c00; font-weight: bold;"><%= error %></span>
+                    <% } %>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Register</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS CDN link (Optional if you need JavaScript features) -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function validateForm() {
+            var email = document.getElementById("email").value;
+            var phone = document.getElementById("phone").value;
+            var password = document.getElementById("password").value;
+
+            // Email validation
+            var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                document.getElementById("emailError").innerText = "Email should be validated.";
+                return false;
+            } else {
+                document.getElementById("emailError").innerText = "";
+            }
+
+            // Phone validation
+            var phoneRegex = /^[2-9]\d{9}$/;
+            var sequentialRegex = /(.)\1{9}/;
+            if (!phoneRegex.test(phone) || sequentialRegex.test(phone)) {
+                document.getElementById("phoneError").innerText = "Phone number should be validated.";
+                return false;
+            } else {
+                document.getElementById("phoneError").innerText = "";
+            }
+
+            // Password validation
+            var passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            if (!passwordRegex.test(password)) {
+                document.getElementById("passwordError").innerText = "Password should contain at least 8 characters, including letters, symbols (@$!%*?&), and numbers.";
+                return false;
+            } else {
+                document.getElementById("passwordError").innerText = "";
+            }
+
+            return true;
+        }
+    </script>
+</body>
+
+</html>
