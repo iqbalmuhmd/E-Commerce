@@ -6,6 +6,8 @@ const adminAuth = require('../middleware/adminAuth')
 const adminController = require('../controller/admin/login&signupController')
 const mainController = require('../controller/admin/mainController')
 const userController = require('../controller/admin/userController')
+const productController = require('../controller/admin/productsController')
+const categoryController = require('../controller/admin/categoryController')
 
 adminRouter.set('view engine', 'ejs')
 
@@ -35,7 +37,13 @@ adminRouter.post('/dashboard', adminController.verifyLogin)
 adminRouter.get('/dashboard', mainController.loadDashboard)
 adminRouter.get('/users', userController.getUser)
 adminRouter.get('/usersBlock', userController.usersBlock)
-
+adminRouter.get('/products', productController.loadProducts)
+adminRouter.get('/products/add-product', productController.addProduct)
+adminRouter.get('/category', categoryController.loadCategory)
+adminRouter.get('/category/add-category', categoryController.loadAddCategory)
+adminRouter.post('/category/add-category', categoryController.addCategory)
+adminRouter.get('/category/edit-category', categoryController.editCategory)
+adminRouter.post('/category/edit-category', categoryController.postEditCategory)
 
 
 
