@@ -1,8 +1,9 @@
 const express = require('express')
 const userRouter = express()
 const bodyParser = require("body-parser")
-const session = require('express-session')
 
+userRouter.use(bodyParser.json())
+userRouter.use(bodyParser.urlencoded({ extended: true }))
 userRouter.set('view engine', 'ejs')
 
 userRouter.use(function (req, res, next) {
@@ -15,26 +16,31 @@ userRouter.use(function (req, res, next) {
     next();
   });
 
-userRouter.use(bodyParser.json())
-userRouter.use(bodyParser.urlencoded({ extended: true }))
-
-userRouter.use(session({
-    secret: 'thisismysecret',
-    resave: false, 
-    saveUninitialized: false
-}))
 
 const loginSignUpController = require('../controller/user/login&signupController')
-const auth = require('../middleware/auth')
+const userAuth = require('../middleware/userAuth')
 
-userRouter.get('/', loginSignUpController.loadHome)
-userRouter.get('/home', loginSignUpController.loadHome)
-userRouter.get('/login', auth.isLogout, loginSignUpController.loadLogin)
-userRouter.post('/login', auth.isLogout, loginSignUpController.verifyLogin)
-userRouter.get('/register', auth.isLogout, loginSignUpController.loadRegister)
-userRouter.post('/register', loginSignUpController.insertUser)
-userRouter.get('/verifyOTP', auth.isLogout, loginSignUpController.loadOTPpage)
-userRouter.post('/verifyOTP', loginSignUpController.verifyOTPSignup)
-userRouter.get('/logout', loginSignUpController.Logout)
+
+// Home
+userRouter.get('/', loginSignUpController.loadHome);
+userRouter.get('/home', loginSignUpController.loadHome);
+
+// Login
+userRouter.get('/login', userAuth.isLogout, loginSignUpController.loadLogin);
+userRouter.post('/login', userAuth.isLogout, loginSignUpController.verifyLogin);
+
+// Register
+userRouter.get('/register', userAuth.isLogout, loginSignUpController.loadRegister);
+userRouter.post('/register', loginSignUpController.insertUser);
+
+// OTP Verification
+userRouter.get('/verifyOTP', userAuth.isLogout, loginSignUpController.loadOTPpage);
+userRouter.post('/verifyOTP', loginSignUpController.verifyOTPSignup);
+
+// Logout
+userRouter.get('/logout', loginSignUpController.Logout);
+
+
+
 
 module.exports = userRouter

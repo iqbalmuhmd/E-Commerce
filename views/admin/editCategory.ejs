@@ -12,6 +12,7 @@
             <form class="forms-sample" method="post" action="/admin/category/edit-category">
               <div class="form-group">
                 <label for="exampleInputName1">Category name</label>
+                <input type="hidden" name="id" value="<%= category._id %>"/>
                 <input
                   type="text"
                   class="form-control"
@@ -36,3 +37,6 @@
     </div>
   </div>
 </div>
+
+
+<%- include('../partials/admin/footer') %>

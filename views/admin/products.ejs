@@ -3,9 +3,7 @@
 
 <div class="main-panel">
   <div class="content-wrapper">
-    <a href="/admin/products/add-product" class="btn btn-primary mb-3"
-      >Add Product</a
-    >
+    <a href="/admin/products/add-product" class="btn btn-primary mb-3">Add Product</a>
     <div class="row">
       <div class="col-lg-12 grid-margin stretch-card">
         <div class="card">
@@ -21,14 +19,52 @@
                     <th>Category</th>
                     <th>Quantity</th>
                     <th>Price</th>
-                    <th>Offer in Percentage</th>
-                    <th>Offer Price</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody class="table-border-bottom-0">
+                  <% if (products.length > 0) { %>
+                    <% for (let i = 0; i < products.length; i++) { %>
+                      <tr>
+                        <td><%= i+1 %></td>
+                        <td><%= products[i].productName %></td>
+                        <td>
+                          <div class="row">
+                            <div class="col-4">
+                              <img src="<%= products[i].images[0] %>" alt="" class="img-click" style="width: 40px; height: 40px;">
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <% if (products[i].category !== null) { %>
+                            <%= products[i].category.category %>
+                          <% } else { %>
+                            <span class="text-danger">Not mention</span>
+                          <% } %>
+                        </td>
+                        <td><%= products[i].quantity %></td>
+                        <td>₹<%= products[i].price %></td>
+                        <td style="position: relative;">
+                          <div class="btn-group">
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                              Action
+                            </button>
+                            <ul class="dropdown-menu" style="position: absolute; top: 100%; left: 0; z-index: 1000; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                              <li><a class="dropdown-item edit-btn" href="/admin/products/edit-product?id=<%= products[i]._id %>" style="color: #212529;">Edit</a></li>
+                              <li><a class="dropdown-item delete-btn" href="/admin/products/delete-product?id=<%= products[i]._id %>" style="color: #212529;">Delete</a></li>
+                            </ul>
+                          </div>
+                        </td>
+                      </tr>
+                    <% } %>
+                  <% } else { %>
+                    <tr>
+                      <td colspan="7">Products Not Found</td>
+                    </tr>
+                  <% } %>
                 </tbody>
-            </table>
+              </table>
+            </div>
           </div>
         </div>
       </div>
@@ -36,3 +72,28 @@
   </div>
 </div>
 </div>
+
+<!-- jQuery for handling dropdown interactions -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<!-- Bootstrap JS for dropdown functionality -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  // Handle click events for the Edit and Delete buttons
+  $(document).ready(function() {
+    $('.edit-btn').on('click', function() {
+      // Get the product ID from the data attribute or other source
+      var productId = "your_product_id_here";
+      window.location.href = "/admin/edit-product?id=" + productId;
+    });
+
+    $('.delete-btn').on('click', function() {
+      // Get the product ID from the data attribute or other source
+      var productId = "your_product_id_here";
+      window.location.href = "/admin/delete-product?id=" + productId;
+    });
+  });
+</script>
+
+
+<%- include('../partials/admin/footer') %>

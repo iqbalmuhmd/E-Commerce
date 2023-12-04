@@ -101,15 +101,6 @@ const insertUser = async (req, res) => {
   }
 };
 
-const Logout = async (req, res) => {
-  try {
-    req.session.destroy();
-    res.redirect("/home");
-  } catch (error) {
-    res.render("error/internalError", { error });
-  }
-};
-
 // Nodemailer stuff
 let transporter = nodemailer.createTransport({
   service: "Gmail",
@@ -199,6 +190,15 @@ const verifyOTPSignup = async (req, res) => {
         }
       }
     }
+  } catch (error) {
+    res.render("error/internalError", { error });
+  }
+};
+
+const Logout = async (req, res) => {
+  try {
+    req.session.destroy();
+    res.redirect("/home");
   } catch (error) {
     res.render("error/internalError", { error });
   }

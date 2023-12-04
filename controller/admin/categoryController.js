@@ -65,13 +65,9 @@ const postEditCategory = async (req, res) => {
       if (check) {
         res.render('admin/add-category', { error: 'Category already exists' });
       } else {
-        const category = await Category.updateOne({ category: categoryName });
+        await Category.updateOne({ _id: req.body.id }, { $set: { category: categoryName } });
 
-        if (category) {
-          return res.redirect("/admin/category");
-        } else {
-          return res.redirect("/admin/category");
-        }
+        return res.redirect("/admin/category");
       }
     }
   } catch (error) {
@@ -79,10 +75,23 @@ const postEditCategory = async (req, res) => {
   }
 };
 
+const deleteCategory = async(req,res) =>{
+  try {
+    const id = req.query.id;
+    await Category.findByIdAndDelete({ _id: id });
+
+    res.redirect('/admin/category')
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+
 module.exports = {
   loadCategory,
   loadAddCategory,
   addCategory,
   editCategory,
-  postEditCategory
+  postEditCategory,
+  deleteCategory
 };

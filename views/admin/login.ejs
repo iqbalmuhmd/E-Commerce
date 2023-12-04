@@ -33,7 +33,7 @@
     <div class="container">
         <div class="form-container">
             <h2>Admin Login</h2>
-            <form action="/admin/dashboard" method="post">
+            <form action="/admin/login" method="post">
                 <div class="form-group">
                     <label for="email">Email</label>
                     <input type="email" class="form-control" name="email" id="email" required>
@@ -42,11 +42,10 @@
                     <label for="password">Password</label>
                     <input type="password" class="form-control" name="password" id="password" required>
                 </div>
-                <% 
-                if(typeof message !== 'undefined'){
-                  %> <p style="color: red;"><%= message %></p> <%
-                } %>
-                
+                <% if (typeof message !== 'undefined') { %>
+                    <p style="color: red;"><%= message %></p>
+                <% } %>
+
                 <button type="submit" class="btn btn-primary btn-block">Login</button>
             </form>
         </div>
@@ -56,3 +55,6 @@
 </body>
 
 </html>
+
+
+<%- include('../partials/admin/footer') %>
