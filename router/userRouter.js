@@ -17,8 +17,10 @@ userRouter.use(function (req, res, next) {
   });
 
 
-const loginSignUpController = require('../controller/user/login&signupController')
 const userAuth = require('../middleware/userAuth')
+const loginSignUpController = require('../controller/user/login&signupController')
+const mainController = require('../controller/user/mainController')
+
 
 
 // Home
@@ -39,6 +41,12 @@ userRouter.post('/verifyOTP', loginSignUpController.verifyOTPSignup);
 
 // Logout
 userRouter.get('/logout', loginSignUpController.Logout);
+
+userRouter.get('/shop', mainController.loadShop)
+userRouter.get('/productDetail', mainController.loadproductDetail)
+
+userRouter.get('/verifyUser', loginSignUpController.loadVerifyUser)
+userRouter.post('/verifyUser', loginSignUpController.verifyUserEmail);
 
 
 

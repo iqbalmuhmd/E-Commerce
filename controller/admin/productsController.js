@@ -35,7 +35,7 @@ const addProductPost = async (req, res) => {
       images: imagesWithPath
     });
     await newProduct.save();
-    res.redirect("/admin/products/add-product");
+    res.redirect("/admin/products");
   } catch (error) {
     console.log(error.message);
   }

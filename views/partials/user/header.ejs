@@ -1,3 +1,29 @@
+<!DOCTYPE html>
+<html lang="zxx">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Male_Fashion Template">
+    <meta name="keywords" content="Male_Fashion, unica, creative, html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Male-Fashion | Template</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="css/elegant-icons.css" type="text/css">
+    <link rel="stylesheet" href="css/magnific-popup.css" type="text/css">
+    <link rel="stylesheet" href="css/nice-select.css" type="text/css">
+    <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css">
+    <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
+    <link rel="stylesheet" href="css/style.css" type="text/css">
+</head>
+
 <!-- Header Section Begin -->
 <header class="header">
     <div class="header__top">
@@ -11,8 +37,13 @@
                 <div class="col-lg-6 col-md-5">
                     <div class="header__top__right">
                         <div class="header__top__links">
-                            <a href="#">Sign in</a>
-                            <a href="#">FAQs</a>
+                            <% if(user){ %>
+                                <a href="/logout">Sign Out</a>
+                                <% }else{ %>
+                                    <a href="/login">Sign In</a>
+                                    <% } %>
+
+                                        <a href="#">FAQs</a>
                         </div>
                         <div class="header__top__hover">
                             <span>Usd <i class="arrow_carrot-down"></i></span>
@@ -37,8 +68,8 @@
             <div class="col-lg-6 col-md-6">
                 <nav class="header__menu mobile-menu">
                     <ul>
-                        <li><a href="./index.html">Home</a></li>
-                        <li class="active"><a href="./shop.html">Shop</a></li>
+                        <li ><a href="/">Home</a></li>
+                        <li ><a href="/shop">Shop</a></li>
                         <li><a href="#">Pages</a>
                             <ul class="dropdown">
                                 <li><a href="./about.html">About Us</a></li>

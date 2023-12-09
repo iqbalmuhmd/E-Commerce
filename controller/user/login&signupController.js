@@ -37,7 +37,7 @@ const verifyLogin = async (req, res) => {
           req.session.user_id = userData._id;
           return res.redirect('/');
         } else {
-          res.render('user/login', { message: 'User not verified yet!!' });
+          res.render('user/login', { message: 'User not verified!!' });
         }
       } else {
         res.render('user/login', { message: 'Password not match!!' });
@@ -185,7 +185,7 @@ const verifyOTPSignup = async (req, res) => {
             // success
             await User.updateOne({ _id: userId }, { $set: { isVerified: true } });
             await UserOTPVerification.deleteMany({ userId });
-            res.redirect("/login");
+            res.redirect("/");
           }
         }
       }
@@ -204,6 +204,36 @@ const Logout = async (req, res) => {
   }
 };
 
+const loadVerifyUser = async (req, res) => {
+  try {
+    res.render("user/loadVerify");
+  } catch (error) {
+    res.render("error/internalError", { error });
+  }
+}; 
+
+const verifyUserEmail = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.render('user/loadVerify', { error: 'Email does not exist' });
+    }
+
+    if (user.isVerified) {
+      return res.render('user/loadVerify', { error: 'Email already verified' });
+    }
+
+    // If the email exists and is not verified, send OTP and redirect to OTP verification page
+    sendOTPVerificationEmail(user, res);
+    return res.redirect(`/verifyOTP?userId=${user._id}`);
+
+  } catch (error) {
+    res.render('error/internalError', { error });
+  }
+};
+
 module.exports = {
   loadHome,
   loadLogin,
@@ -212,5 +242,7 @@ module.exports = {
   loadOTPpage,
   verifyOTPSignup,
   verifyLogin,
-  Logout
+  Logout,
+  loadVerifyUser,
+  verifyUserEmail
 };

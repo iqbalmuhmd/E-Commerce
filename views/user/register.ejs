@@ -52,18 +52,17 @@
                     <label for="password">Password</label>
                     <input type="password" class="form-control" id="password" name="password" required>
                     <span id="passwordError" style="color: #c00; font-weight: bold;"></span>
-                    <% if(typeof message !== "undefined") { %>
-                        <span style="color:#61ff61; font-weight: bold;"><%= message %></span>
-                    <% } %>
-                    <% if(typeof error !== 'undefined') { %>
-                        <span style="color: #c00; font-weight: bold;"><%= error %></span>
-                    <% } %>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                    <span id="confirmPasswordError" style="color: #c00; font-weight: bold;"></span>
                 </div>
                 <button type="submit" class="btn btn-primary btn-block">Register</button>
             </form>
         </div>
     </div>
-    
+
     <!-- Bootstrap JS CDN link (Optional if you need JavaScript features) -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
@@ -71,6 +70,7 @@
             var email = document.getElementById("email").value;
             var phone = document.getElementById("phone").value;
             var password = document.getElementById("password").value;
+            var confirmPassword = document.getElementById("confirmPassword").value;
 
             // Email validation
             var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -98,6 +98,14 @@
                 return false;
             } else {
                 document.getElementById("passwordError").innerText = "";
+            }
+
+            // Confirm Password validation
+            if (password !== confirmPassword) {
+                document.getElementById("confirmPasswordError").innerText = "Passwords do not match.";
+                return false;
+            } else {
+                document.getElementById("confirmPasswordError").innerText = "";
             }
 
             return true;
