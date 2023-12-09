@@ -13,6 +13,10 @@ const user = mongoose.Schema({
         type: Number,
         required: true
     },
+    profile: {
+        type: String,
+        default: "",
+      },
     password: {
         type: String,
         required: true

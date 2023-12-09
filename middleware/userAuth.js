@@ -8,9 +8,9 @@ const isLogin = async (req, res, next) => {
 
     const user = await User.findById(req.session.user_id);
 
-    if (user.isActive === true) {
+    if (user.isActive === false) {
       req.session.destroy();
-      return res.render("users/login", { message: "Your account is blocked" });
+      return res.render("user/login", { message: "Your account is blocked" });
     }
 
     next();

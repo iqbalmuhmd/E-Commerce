@@ -20,6 +20,8 @@ userRouter.use(function (req, res, next) {
 const userAuth = require('../middleware/userAuth')
 const loginSignUpController = require('../controller/user/login&signupController')
 const mainController = require('../controller/user/mainController')
+const profileController = require('../controller/user/profileController')
+const imageUpload = require('../middleware/imageUpload')
 
 
 
@@ -45,8 +47,13 @@ userRouter.get('/logout', loginSignUpController.Logout);
 userRouter.get('/shop', mainController.loadShop)
 userRouter.get('/productDetail', mainController.loadproductDetail)
 
-userRouter.get('/verifyUser', loginSignUpController.loadVerifyUser)
-userRouter.post('/verifyUser', loginSignUpController.verifyUserEmail);
+userRouter.get('/verifyUser', userAuth.isLogout, loginSignUpController.loadVerifyUser)
+userRouter.post('/verifyUser', userAuth.isLogout, loginSignUpController.verifyUserEmail);
+
+userRouter.get('/profile', userAuth.isLogin, profileController.loadProfile)
+
+userRouter.patch('/profile/editPhoto', userAuth.isLogin, imageUpload.uploadProfileImage, imageUpload.resizeProfileImage, profileController.updateProfilePhoto)
+userRouter.get('/profile/deletePhoto', userAuth.isLogin, profileController.deleteProfilePhoto)
 
 
 

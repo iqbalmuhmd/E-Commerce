@@ -1,5 +1,6 @@
 require('dotenv').config();
 const session = require('express-session')
+const methodOveride = require('method-override')
 const express = require('express')
 const app = express()
 
@@ -14,6 +15,8 @@ app.use(session({
     resave: false, 
     saveUninitialized: false
 }))
+
+app.use(methodOveride("_method"))
 
 const userRoute = require('./router/userRouter');
 const adminRoute = require('./router/adminRouter')
