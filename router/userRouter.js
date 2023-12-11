@@ -44,18 +44,33 @@ userRouter.post('/verifyOTP', loginSignUpController.verifyOTPSignup);
 // Logout
 userRouter.get('/logout', loginSignUpController.Logout);
 
-userRouter.get('/shop', mainController.loadShop)
-userRouter.get('/productDetail', mainController.loadproductDetail)
+// Shop
+userRouter.get('/shop', mainController.loadShop);
 
-userRouter.get('/verifyUser', userAuth.isLogout, loginSignUpController.loadVerifyUser)
+// Product Detail
+userRouter.get('/productDetail', mainController.loadproductDetail);
+
+// Verify User
+userRouter.get('/verifyUser', userAuth.isLogout, loginSignUpController.loadVerifyUser);
 userRouter.post('/verifyUser', userAuth.isLogout, loginSignUpController.verifyUserEmail);
 
-userRouter.get('/profile', userAuth.isLogin, profileController.loadProfile)
+// Profile
+userRouter.get('/profile', userAuth.isLogin, profileController.loadProfile);
 
-userRouter.patch('/profile/editPhoto', userAuth.isLogin, imageUpload.uploadProfileImage, imageUpload.resizeProfileImage, profileController.updateProfilePhoto)
-userRouter.get('/profile/deletePhoto', userAuth.isLogin, profileController.deleteProfilePhoto)
+// Edit Profile
+userRouter.get('/edit-profile', userAuth.isLogin, profileController.loadEditProfile);
+userRouter.post('/edit-profile', userAuth.isLogin, profileController.editProfile);
 
+// Profile Photo
+userRouter.patch('/profile/editPhoto', userAuth.isLogin, imageUpload.uploadProfileImage, imageUpload.resizeProfileImage, profileController.updateProfilePhoto);
+userRouter.get('/profile/deletePhoto', userAuth.isLogin, profileController.deleteProfilePhoto);
 
+// Verify Change Mail
+userRouter.get('/verifyChangeMail', userAuth.isLogin, profileController.loadOTPChangeMail);
+userRouter.post('/verifyChangeMail', userAuth.isLogin, profileController.verifyOTPChangeMail);
 
+// Change Password
+userRouter.get('/change-password', profileController.loadChangePass)
+userRouter.post('/change-password', profileController.changePass)
 
 module.exports = userRouter

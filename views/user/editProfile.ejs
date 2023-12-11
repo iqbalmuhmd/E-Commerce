@@ -1,0 +1,103 @@
+<%- include('../partials/user/header') %>
+
+<section class="bg0 p-t-75 p-b-120">
+  <div class="container">
+    <div class="container-xxl flex-grow-1 container-p-y">
+      <h4 class="fw-bold mb-4">Edit Profile</h4>
+
+      <div class="row">
+        <div class="col-xxl">
+          <a class="btn btn-primary" href="/profile" role="button">Back to Profile</a>
+          <div class="card mb-4" style="margin-top: 20px;">
+            <div style="margin-top: 5px; text-align: center; font-family: 'Poppins', sans-serif;">
+              <% if (typeof message !== "undefined") { %>
+                <span style="color: green; font-weight: bold;"><%= message %></span>
+              <% } %>
+              <% if (typeof error !== "undefined") { %>
+                <span style="color:#f00; font-weight: bold;"><%= error %></span>
+              <% } %>
+            </div>
+            <div class="card-body">
+              <form method="post" action="/edit-profile">
+                <input type="hidden" name="id" value="<%= user._id %>">
+
+                <div class="mb-3">
+                  <label for="name" class="form-label">Name</label>
+                  <input type="text" class="form-control" id="name" placeholder="Enter your name" name="name" value="<%= user.name %>" />
+                </div>
+
+                <div class="mb-3">
+                  <label for="email" class="form-label">Email</label>
+                  <input type="email" class="form-control" id="email" placeholder="Enter your email" name="email" value="<%= user.email %>" />
+                </div>
+
+                <div class="mb-3">
+                  <label for="phone" class="form-label">Phone</label>
+                  <input type="tel" class="form-control" id="phone" placeholder="Enter your phone number" name="phone" value="<%= user.phone %>" />
+                </div>
+
+                <div class="row justify-content-end">
+                  <div class="col-sm-10">
+                    <button type="submit" class="btn btn-primary">Edit Profile</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/user/footer') %>
+
+<!-- Back to top -->
+<div class="btn-back-to-top" id="myBtn">
+  <span class="symbol-btn-back-to-top">
+    <i class="zmdi zmdi-chevron-up"></i>
+  </span>
+</div>
+
+<!--===============================================================================================-->
+<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+<!--===============================================================================================-->
+<script src="vendor/animsition/js/animsition.min.js"></script>
+<!--===============================================================================================-->
+<script src="vendor/bootstrap/js/popper.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+<!--===============================================================================================-->
+<script src="vendor/select2/select2.min.js"></script>
+<script>
+  $(".js-select2").each(function () {
+    $(this).select2({
+      minimumResultsForSearch: 20,
+      dropdownParent: $(this).next('.dropDownSelect2')
+    });
+  })
+</script>
+<!--===============================================================================================-->
+<script src="vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
+<!--===============================================================================================-->
+<script src="vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+<script>
+  $('.js-pscroll').each(function () {
+    $(this).css('position', 'relative');
+    $(this).css('overflow', 'hidden');
+    var ps = new PerfectScrollbar(this, {
+      wheelSpeed: 1,
+      scrollingThreshold: 1000,
+      wheelPropagation: false,
+    });
+
+    $(window).on('resize', function () {
+      ps.update();
+    })
+  });
+</script>
+<!--===============================================================================================-->
+<script src="js/main.js"></script>
+
+</body>
+
+</html>

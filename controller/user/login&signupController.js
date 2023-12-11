@@ -1,14 +1,16 @@
 const User = require('../../model/userModel');
+const Product = require('../../model/productModel')
 const UserOTPVerification = require("../../model/userOTPVerification");
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 
 const loadHome = async (req, res) => {
   try {
+    const products = await Product.find();
     const user = await User.findById(req.session.user_id);
-    return res.render('user/index', { user });
+    return res.render('user/index', { products, user });
   } catch (error) {
-    res.render("error/internalError", { error });
+    console.log(error.message);
   }
 };
 
@@ -16,7 +18,7 @@ const loadLogin = async (req, res) => {
   try {
     res.render('user/login');
   } catch (error) {
-    res.render("error/internalError", { error });
+    console.log(error.message);
   }
 };
 
@@ -54,7 +56,7 @@ const loadRegister = async (req, res) => {
   try {
     res.render('user/register');
   } catch (error) {
-    res.render("error/internalError", { error });
+    console.log(error.message);
   }
 };
 
@@ -63,7 +65,7 @@ const securePassword = async (password) => {
     const passwordHash = await bcrypt.hash(password, 10);
     return passwordHash;
   } catch (error) {
-    res.render("error/internalError", { error });
+    console.log(error.message);
   }
 };
 
@@ -139,7 +141,7 @@ const sendOTPVerificationEmail = async ({ _id, email }, res) => {
     await newOTPVerification.save();
     await transporter.sendMail(mailOptions);
   } catch (error) {
-    res.render("error/internalError", { error });
+    console.log(error.message);
   }
 };
 
@@ -148,7 +150,7 @@ const loadOTPpage = async (req, res) => {
     const userId = req.query.userId;
     res.render("user/signup-otp", { userId });
   } catch (error) {
-    res.render("error/internalError", { error });
+    console.log(error.message);
   }
 };
 
@@ -191,7 +193,7 @@ const verifyOTPSignup = async (req, res) => {
       }
     }
   } catch (error) {
-    res.render("error/internalError", { error });
+    console.log(error.message);
   }
 };
 
@@ -200,7 +202,7 @@ const Logout = async (req, res) => {
     req.session.destroy();
     res.redirect("/home");
   } catch (error) {
-    res.render("error/internalError", { error });
+    console.log(error.message);
   }
 };
 
@@ -208,7 +210,7 @@ const loadVerifyUser = async (req, res) => {
   try {
     res.render("user/loadVerify");
   } catch (error) {
-    res.render("error/internalError", { error });
+    console.log(error.message);
   }
 }; 
 
@@ -230,7 +232,7 @@ const verifyUserEmail = async (req, res) => {
     return res.redirect(`/verifyOTP?userId=${user._id}`);
 
   } catch (error) {
-    res.render('error/internalError', { error });
+    console.log(error.message);
   }
 };
 
