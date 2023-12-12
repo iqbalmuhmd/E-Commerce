@@ -45,21 +45,32 @@
                             <h2 class="mb-4">Addresses</h2>
                             <div class="row">
                                 <!-- Add Address Button -->
+                                <% if (userAddress.length < 4) { %>
                                 <div class="col-md-12 ">
                                     <a href="/add-address" class="btn btn-success" id="add-address-button">Add Address</a>
                                 </div>
+                                <% } %>
+
                                 <!-- Sample address card -->
+                                <% if (userAddress.length > 0) {
+                                    for (let i = 0; i < userAddress.length; i++) { %>
                                 <div class="col-md-6 mb-4 mt-4">
                                     <div class="card">
                                         <div class="card-body">
-                                            <h5 class="card-title">Address 1</h5>
-                                            <p class="card-text">123 Main St, District XYZ, State ABC, Country PQR</p>
-                                            <a href="#" class="btn btn-primary btn-sm">Edit</a>
-                                            <a href="#" class="btn btn-danger btn-sm">Delete</a>
+                                            <h5 class="card-title">Address <%= i+1 %></h5>
+                                            <p class="card-text"><%= userAddress[i].name %>, <%= userAddress[i].district %>, <%= userAddress[i].state %>, <%= userAddress[i].country %></p>
+                                            <a href="/edit-address?id=<%= userAddress[i]._id %>" class="btn btn-primary btn-sm">Edit</a>
+                                            <a href="delete-address?id=<%= userAddress[i]._id %>" class="btn btn-danger btn-sm">Delete</a>
                                         </div>
                                     </div>
                                 </div>
-                                <!-- Add more addresses here... -->
+                                <% }
+		                } else { %>
+                            <div style="margin-top: 20px;">
+                      <h4>You are not added address</h4>
+                    </div>
+
+                    <% } %>
                             </div>
                         </section>
                     </div>

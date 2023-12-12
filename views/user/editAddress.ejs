@@ -7,23 +7,20 @@
       <div class="col-lg-6 col-md-8">
         <a href="/profile" class="btn btn-primary">Back to Profile</a>
         <div style="margin-top: 10px; text-align: center; font-family: 'Poppins',sans-serif;">
-          <% 
-            if(typeof error !== "undefined"){
-          %>
-          <span style="color:#f00; font-weight: bold;"><%= error %></span>
-          <%
-            }
-          %>
+          <% if(typeof error !== "undefined"){ %>
+            <span style="color:#f00; font-weight: bold;"><%= error %></span>
+          <% } %>
         </div>
 
-        <form style="margin-top: 15px;" action="/edit-address" method="post">
+        <form style="margin-top: 15px;" action="/edit-address" method="post" id="editAddressForm">
           <div class="mb-3">
-            <label for="username" class="form-label">Name</label>
+            <label for="name" class="form-label">Name</label>
             <input type="text" class="form-control" id="name" placeholder="Your Name" name="name" value="<%= editAddress.name %>" required>
           </div>
           <div class="mb-3">
             <label for="phoneNumber" class="form-label">Phone Number</label>
             <input type="tel" class="form-control" id="phoneNumber" placeholder="Phone Number" name="phone" value="<%= editAddress.phone %>" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
+            <small id="phoneNumberError" class="form-text text-danger"></small>
           </div>
           <div class="mb-3">
             <label for="country" class="form-label">Country</label>
@@ -106,6 +103,31 @@
     })
   });
 </script>
+<!--===============================================================================================-->
+<script>
+    // Function to validate the phone number
+    function validatePhoneNumber() {
+      var phoneNumberInput = document.getElementById('phoneNumber');
+      var phoneNumber = phoneNumberInput.value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+      var phoneNumberError = document.getElementById('phoneNumberError');
+  
+      if (phoneNumber.length !== 10 || isNaN(phoneNumber)) {
+        phoneNumberError.innerHTML = 'Please enter a valid 10-digit phone number.';
+        phoneNumberInput.classList.add('is-invalid');
+        return false;
+      } else {
+        phoneNumberError.innerHTML = ''; // Clear the error message
+        phoneNumberInput.classList.remove('is-invalid');
+      }
+  
+      return true;
+    }
+  
+    // Attach the validation function to the form's onsubmit event
+    document.getElementById('editAddressForm').onsubmit = function () {
+      return validatePhoneNumber();
+    };
+  </script>
 <!--===============================================================================================-->
 <script src="js/main.js"></script>
 

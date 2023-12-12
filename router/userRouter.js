@@ -70,7 +70,19 @@ userRouter.get('/verifyChangeMail', userAuth.isLogin, profileController.loadOTPC
 userRouter.post('/verifyChangeMail', userAuth.isLogin, profileController.verifyOTPChangeMail);
 
 // Change Password
-userRouter.get('/change-password', profileController.loadChangePass)
-userRouter.post('/change-password', profileController.changePass)
+userRouter.get('/change-password', userAuth.isLogin, profileController.loadChangePass);
+userRouter.post('/change-password', userAuth.isLogin, profileController.changePass);
+
+// Add Address
+userRouter.get('/add-address', userAuth.isLogin, profileController.loadAddAddress);
+userRouter.post('/add-address', userAuth.isLogin, profileController.addAddress);
+
+// Edit Address
+userRouter.get('/edit-address', userAuth.isLogin, profileController.loadEditAddress);
+userRouter.post('/edit-address', userAuth.isLogin, profileController.editAddress);
+
+// Delete Address
+userRouter.get('/delete-address', userAuth.isLogin, profileController.deleteAddress);
+
 
 module.exports = userRouter
