@@ -13,9 +13,24 @@ const loadShop = async(req,res) =>{
 
 const loadproductDetail = async(req,res) =>{
     try {
-        const product = await Product.findById(req.query.id)
+        
         const user = await User.findById(req.session.user_id);
-        res.render('user/productDetail', { product, user })
+        const productIdToCheck = req.query.id;
+
+        const check = await User.findOne({
+            _id: user,
+            cart: { $elemMatch: {product: productIdToCheck} }
+        })
+
+        const product = await Product.findById(productIdToCheck)
+
+        if(check){
+            res.render('user/productDetail', { product, user, message: 'already exist in a cart' })
+        }else{
+            res.render('user/productDetail', { product, user, message: '' })
+        }
+
+        
     } catch (error) {
         console.log(error.message);
     }

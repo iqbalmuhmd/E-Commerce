@@ -2359,23 +2359,31 @@ ol {
 }
 
 .shopping__cart__table table tbody tr td.quantity__item .quantity .pro-qty-2 {
-	width: 80px;
+    width: auto; /* Change to auto to allow content to determine width */
+    display: flex; /* Use flex display for horizontal alignment */
+    align-items: center; /* Center items vertically */
 }
 
 .shopping__cart__table table tbody tr td.quantity__item .quantity .pro-qty-2 input {
-	width: 50px;
-	border: none;
-	text-align: center;
-	color: #111111;
-	font-size: 16px;
+    width: 50px;
+    border: none;
+    text-align: center;
+    color: #111111;
+    font-size: 16px;
+    margin: 0 0.5cm; /* Add margin to both sides to create space */
 }
 
 .shopping__cart__table table tbody tr td.quantity__item .quantity .pro-qty-2 .qtybtn {
-	font-size: 16px;
-	color: #888888;
-	width: 10px;
-	cursor: pointer;
+    font-size: 16px;
+    color: #888888;
+    cursor: pointer;
 }
+
+
+.shopping__cart__table table tbody tr td.quantity__item .quantity .pro-qty-2 .qtybtn i {
+    margin: 0; /* Remove default margin */
+}
+
 
 .shopping__cart__table table tbody tr td.cart__price {
 	color: #111111;
@@ -2384,16 +2392,32 @@ ol {
 	width: 140px;
 }
 
-.shopping__cart__table table tbody tr td.cart__close i {
-	font-size: 18px;
-	color: #111111;
-	height: 40px;
+/* Additional styles for the delete button */
+.delete-button {
+	display: inline-block;
 	width: 40px;
-	background: #f3f2ee;
+	height: 40px;
 	border-radius: 50%;
+	background-color: #f3f2ee;
+	color: #111111;
+	font-size: 20px; /* Adjust the font size as needed */
+	font-weight: bold; /* Make the font weight bold */
 	line-height: 40px;
 	text-align: center;
-}
+	cursor: pointer;
+	transition: background 0.3s ease, color 0.3s ease;
+  }
+  
+  .delete-button:hover {
+	background-color: #c0c0c0; /* Change to the desired color on hover */
+	color: #ffffff; /* Change to the desired color on hover */
+  }
+  
+  
+  /* Hover effect for the delete button */
+  .delete-button:hover {
+	background-color: #c0c0c0; /* Change to the desired color on hover */
+  }  
 
 .continue__btn.update__btn {
 	text-align: right;

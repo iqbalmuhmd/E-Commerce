@@ -106,7 +106,18 @@
                             </div>
                             <div class="product__item__text">
                                 <h6><%= products[i].productName %></h6>
-                                <a href="#" class="add-cart">+ Add To Cart</a>
+
+                                <% const isInCart = user && user.cart ? user.cart.some(cartItem => cartItem.product.equals(products[i]._id)) : false; %>
+                                <% if (isInCart) { %>
+                                    <% if (isInCart) { %>
+                                        <a href="/cart" class="add-cart">Go To Cart</a>
+                                    <% } else { %>
+                                        <a href="/addToCart?id=<%= products[i]._id %>" class="add-cart">+ Add To Cart</a>
+                                    <% } %> 
+                                <% } else { %>
+                                    <a href="/addToCart?id=<%= products[i]._id %>" class="add-cart">Add To Cart</a>
+                                <% } %>       
+
                                 <h5>₹<%= products[i].price %></h5>
                             </div>
                         </div>
@@ -117,9 +128,6 @@
     </section>
     
 <!-- Product Section End -->
-
-
-    
 
     <!-- Instagram Section Begin -->
     <section class="instagram spad">

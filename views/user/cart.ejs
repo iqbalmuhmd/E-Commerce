@@ -1,0 +1,117 @@
+<%- include('../partials/user/header') %>
+
+<!-- Shopping Cart Section Begin -->
+<section class="shopping-cart spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="shopping__cart__table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if(userData.cart.length > 0) { %>
+                                <% for(let i = 0; i < userData.cart.length; i++) { %>
+                                    <tr>
+                                        <td class="product__cart__item">
+                                            <div class="product__cart__item__pic">
+                                                <img src="<%= userData.cart[i].product.images[0] %>" alt="" style="width: 90px; height: 90px;">
+                                            </div>
+                                            <div class="product__cart__item__text">
+                                                <h6><%= userData.cart[i].product.productName %></h6>
+                                                <h5>₹ <%= userData.cart[i].product.price %></h5>
+                                            </div>
+                                        </td>
+                                        <td class="quantity__item">
+                                            <div class="input-group mb-3" style="max-width: 120px;">
+                                                <div class="input-group-prepend">
+                                                    <button class="btn btn-outline-dark" type="button" onclick="updateCartItem('<%= userData.cart[i].product._id %>', 'decrement')">&minus;</button>
+                                                </div>
+                                                <input type="text" class="form-control text-center" value="<%= userData.cart[i].quantity %>" id="quantityElement_<%= userData.cart[i].product._id %>" aria-label="Example text with button addon" aria-describedby="button-addon1" readonly>
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-dark" type="button" onclick="updateCartItem('<%= userData.cart[i].product._id %>', 'increment')">&plus;</button>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td id="totalPrice_<%= userData.cart[i].product._id %>" class="cart__price">₹ <%= userData.cart[i].total %></td>
+                                        <td class="cart__close">
+                                            <a href="/delete-cart?cartId=<%= userData.cart[i]._id %>" class="delete-button">
+                                                <span data-product-id="<%= userData.cart[i].product._id %>">×</span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <% } %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="4" style="color: red; text-align: center;">Your cart is empty.</td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-6">
+                        <div class="continue__btn">
+                            <a href="/shop">Continue Shopping</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="cart__discount">
+                    <h6>Discount codes</h6>
+                    <form action="#">
+                        <input type="text" placeholder="Coupon code">
+                        <button type="submit">Apply</button>
+                    </form>
+                </div>
+                <div class="cart__total">
+                    <h6>Cart total</h6>
+                    <ul>
+                        <li>Total <span id="grandTotalPrice">₹<%= userData.totalCartAmount %></span></li>
+                    </ul>
+                    <a href="#" class="primary-btn">Proceed to checkout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Shopping Cart Section End -->
+
+<%- include('../partials/user/footer') %>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    function updateCartItem(cartItemId, incOrDec) {
+        const data = {
+            type: incOrDec
+        };
+        $.ajax({
+            url: '/updateCartItem/' + cartItemId,
+            type: 'POST',
+            data: JSON.stringify(data),
+            contentType: 'application/json',
+            success: function(response) {
+                console.log(response.message);
+                
+                if (response.message !== "Stock limit exceeded") {
+                    $('#stockError_' + cartItemId).text("");
+                    $('#totalPrice_' + cartItemId).text('₹' + response.totalPrice.toFixed(2));
+                    $('#grandTotalPrice').text('₹' + response.grandTotal);
+                    $('#quantityElement_' + cartItemId).val(response.quantity);
+                } else {
+                    $('#stockError_' + cartItemId).text(response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error(status, error); 
+            }
+        });
+    }
+</script>

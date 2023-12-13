@@ -22,6 +22,7 @@ const loginSignUpController = require('../controller/user/login&signupController
 const mainController = require('../controller/user/mainController')
 const profileController = require('../controller/user/profileController')
 const imageUpload = require('../middleware/imageUpload')
+const cartController = require('../controller/user/cart&checkoutController')
 
 
 
@@ -83,6 +84,12 @@ userRouter.post('/edit-address', userAuth.isLogin, profileController.editAddress
 
 // Delete Address
 userRouter.get('/delete-address', userAuth.isLogin, profileController.deleteAddress);
+
+// Cart Routes
+userRouter.get('/cart', userAuth.isLogin, cartController.loadCart);
+userRouter.get('/addToCart', userAuth.isLogin, cartController.addToCart);
+userRouter.post('/updateCartItem/:id', userAuth.isLogin, cartController.updateCartItem);
+userRouter.get('/delete-cart', userAuth.isLogin, cartController.deleteCart);
 
 
 module.exports = userRouter
