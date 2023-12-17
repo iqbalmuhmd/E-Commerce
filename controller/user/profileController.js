@@ -9,7 +9,7 @@ const loadProfile = async (req, res) => {
     const user = await User.findById(req.session.user_id);
     const userAddress = await Address.find({ userId: req.session.user_id });
 
-    return res.render('user/profile', { user, userAddress });
+    return res.render('user/profileNew', { user, userAddress });
   } catch (error) {
     console.log(error.message);
   }
@@ -253,7 +253,7 @@ const loadAddAddress = async (req, res) => {
   try {
     const userAddress = await Address.find({ userid: req.session.user_id });
     const user = await User.findById(req.session.user_id);
-    if (userAddress.length < 4) {
+    if (userAddress.length < 3) {
       res.render('user/addAddress', { activePage: 'profile', user });
     } else {
       res.redirect('/profile');

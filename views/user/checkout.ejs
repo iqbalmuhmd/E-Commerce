@@ -1,0 +1,189 @@
+<%- include('../partials/user/header') %>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/5.3.45/css/materialdesignicons.css" integrity="sha256-NAxhqDvtY0l4xn+YVa6WjAcmd94NNfttjNsDmNatFVc=" crossorigin="anonymous" />
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+<div class="container" style="padding: 5rem 0rem;">
+
+    <div class="row">
+        <div class="col-xl-8">
+
+            <div class="card">
+                <div class="card-body">
+                    <form method="post" action="/order-product">
+                        <ol class="activity-checkout mb-0 px-4 mt-3">
+
+                            <!-- Shipping Info Section -->
+                            <li class="checkout-item">
+                                <div class="avatar checkout-icon p-1">
+                                    <div class="avatar-title rounded-circle bg-dark">
+                                        <i class="bx bxs-truck text-white font-size-20"></i>
+                                    </div>
+                                </div>
+                                <div class="feed-item-list">
+                                    <div>
+                                        <h5 class="font-size-16 mb-1">Shipping Info</h5>
+                                        <p class="text-muted text-truncate mb-4">Select your shipping info below or add one</p>
+                                        <div class="mb-3">
+                                            <div class="row">
+                                                <% if (userAddress.length > 0) { %>
+                                                    <% for (let i = 0; i < userAddress.length; i++) { %>
+                                                        <div class="col-lg-4 col-sm-6">
+                                                            <div data-bs-toggle="collapse">
+                                                                <label class="card-radio-label mb-0">
+                                                                    <input type="radio" name="address" checked="true" class="card-radio-input" value="<%= userAddress[i]._id %>">
+                                                                    <div class="card-radio text-truncate p-3">
+                                                                        <span class="fs-14 mb-4 d-block">Address <%= i + 1 %></span>
+                                                                        <span class="fs-14 mb-2 d-block"><%= userAddress[i].name %></span>
+                                                                        <span class="text-muted fw-normal text-wrap mb-1 d-block"><%= userAddress[i].city %>, <%= userAddress[i].district %>, <%= userAddress[i].state %>, <%= userAddress[i].pincode %></span>
+                                                                        <span class="text-muted fw-normal d-block"><%= userAddress[i].phone %></span>
+                                                                    </div>
+                                                                </label>
+                                                                <div class="edit-btn bg-light rounded">
+                                                                    <a href="/edit-address-co?id=<%= userAddress[i]._id %>" class="btn btn-dark" data-bs-toggle="tooltip" data-placement="top">
+                                                                        <i class="bx bx-pencil font-size-16"></i>
+                                                                    </a>                                                                
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    <% } %>
+                                                <% } else { %>
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <h5 class="card-title">No Address Available</h5>
+                                                            <p class="card-text">Please add an address.</p>
+                                                            <a href="/add-address-co" class="btn btn-secondary btn-sm float-end">Add Address</a>
+                                                        </div>
+                                                    </div>
+                                                <% } %>                                                
+                                            </div>
+                                        </div>                                                                            
+                                    </div>
+                                </div>
+                            </li>
+
+                            <!-- Payment Info Section -->
+                            <li class="checkout-item">
+                                <div class="avatar checkout-icon p-1">
+                                    <div class="avatar-title rounded-circle bg-dark">
+                                        <i class="bx bxs-wallet-alt text-white font-size-20"></i>
+                                    </div>
+                                </div>
+                                <div class="feed-item-list">
+                                    <div>
+                                        <h5 class="font-size-16 mb-1">Payment Info</h5>
+                                        <p class="text-muted text-truncate mb-4">Select your payment method</p>
+                                    </div>
+                                    <div>
+                                        <% if(user.totalCartAmount>0){ %>
+                                        <h5 class="font-size-14 mb-3">Payment method :</h5>
+                                        <div class="row">                                                                                    
+                                            <div class="col-lg-3 col-sm-6">
+                                                <div>
+                                                    <label class="card-radio-label">
+                                                        <input type="radio" name="paymentMethod" class="card-radio-input" value="Online" checked>
+                                                        <span class="card-radio py-3 text-center text-truncate">
+                                                            <i class="bx bxl-paypal d-block h2 mb-3"></i>
+                                                            Online Payment
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3 col-sm-6">
+                                                <div>
+                                                    <label class="card-radio-label">
+                                                        <input type="radio" name="paymentMethod" class="card-radio-input" value="COD">
+                                                        <span class="card-radio py-3 text-center text-truncate">
+                                                            <i class="bx bx-money d-block h2 mb-3"></i>
+                                                            <span>Cash on Delivery</span>
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3 col-sm-6">
+                                                <div>
+                                                    <label class="card-radio-label">
+                                                        <input type="radio" name="paymentMethod" class="card-radio-input" value="wallet">
+                                                        <span class="card-radio py-3 text-center text-truncate">
+                                                            <i class="bx bx-wallet d-block h2 mb-3" style="color: #878787;"></i>
+                                                            <span>Wallet</span>
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <div class="text-center">
+                                <button type="submit" class="primary-btn float-right">Place Order</button>
+                            </div>
+                            <% } %>
+                        </ol>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Summary Section -->
+        <div class="col-xl-4">
+            <div class="card checkout-order-summary">
+                <div class="card-body">
+                    <div class="p-3 bg-light mb-3">
+                        <form action="/" method="post">
+                            <p style="margin-bottom: 2px;">Enter any Coupon Code if you have any</p>
+                            <input type="text" name="coupon-code" style="border: 2px solid #bebfc1; width: 11rem; height: 2rem; border-radius: 8px;">
+                            <button type="submit" style="float: right;" class="btn btn-secondary btn-sm">Apply</button>
+                        </form>
+                    </div>
+                    <div class="p-3 bg-light mb-3">
+                        <h5 class="font-size-16 mb-0">Order Summary <span class="float-end ms-2">#MN0124</span></h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-centered mb-0 table-nowrap">
+                            <thead>
+                                <tr>
+                                    <th class="border-top-0" style="width: 110px;" scope="col">Product</th>
+                                    <th class="border-top-0" scope="col">Name</th>
+                                    <th class="border-top-0" scope="col">Quantity</th>
+                                    <th class="border-top-0" scope="col">Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (user.cart.length > 0) { %>
+                                    <% for (let i = 0; i < user.cart.length; i++) { %>
+                                        <tr>
+                                            <td><img src="<%= user.cart[i].product.images[0] %>" alt="" style="width: 50px; height: 50px;"></td>
+                                            <td><%= user.cart[i].product.productName.split(' ').slice(0, 2).join(' ') %></td>
+                                            <td><%= user.cart[i].quantity %></td>
+                                            <td>₹<%= user.cart[i].quantity * user.cart[i].product.price %></td>
+                                        </tr>
+                                    <% } %>
+                                <% } %>
+                                <tr class="bg-light">
+                                    <td colspan="3">
+                                        <h5 class="font-size-14 m-0 text-end">Total:</h5>
+                                    </td>
+                                    <td class="text-end">
+                                        <h5 class="font-size-14 m-0">₹<%= user.totalCartAmount %></h5>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Continue Shopping and Proceed buttons -->
+    <div class="row my-4">
+        <div class="col">
+            <a href="/shop" class="btn btn-link text-muted">
+                <i class="mdi mdi-arrow-left me-1"></i> Continue Shopping
+            </a>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/user/footer') %>

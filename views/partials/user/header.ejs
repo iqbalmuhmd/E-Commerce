@@ -82,17 +82,17 @@
                         <a href="#" class="search-switch"><img src="img/icon/search.png" alt=""></a>
                         <a href="#"><img src="img/icon/heart.png" alt=""></a>
                         <% if(user) { %>
-                        <a href="/cart"><img src="img/icon/cart.png" alt=""> <span><%= user.cart.length %></span></a>
+                        <a href="/cart"><img src="img/icon/cart.png" alt=""> <span></span></a>
                         <% } %>
 
                         <% if(user) { %>
                             <% if(user.profile) { %>
                                 <a href="/profile">
-                                    <img src="<%= user.profile %>" alt="User Profile Picture" class="img-fluid rounded-circle" style="height: 35px; width: 35px;">
+                                    <img src="<%= user.profile %>" alt="User Profile Picture" class="img-fluid rounded-circle" style="height: 27px; width: 27px;">
                                 </a>
                             <% } else { %>
                                 <a href="/profile">
-                                    <img src="/img/defaultPP.jpg" alt="Default Profile Picture" class="img-fluid rounded-circle" style="height: 35px; width: 35px;">
+                                    <img src="/img/defaultPP.jpg" alt="Default Profile Picture" class="img-fluid rounded-circle" style="height: 27px; width: 27px;">
                                 </a>
                             <% } %>
                         <% } %>                        

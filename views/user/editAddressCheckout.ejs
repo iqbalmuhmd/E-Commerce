@@ -5,14 +5,14 @@
     <h2 class="mb-4">Edit Address</h2>
     <div class="row justify-content-center">
       <div class="col-lg-6 col-md-8">
-        <a href="/profile" class="btn btn-secondary">Back to Profile</a>
+        <a href="/checkout" class="btn btn-primary">Back to Checkout</a>
         <div style="margin-top: 10px; text-align: center; font-family: 'Poppins',sans-serif;">
           <% if(typeof error !== "undefined"){ %>
             <span style="color:#f00; font-weight: bold;"><%= error %></span>
           <% } %>
         </div>
 
-        <form style="margin-top: 15px;" action="/edit-address" method="post" id="editAddressForm">
+        <form style="margin-top: 15px;" action="/edit-address-co" method="post" id="editAddressForm">
           <div class="mb-3">
             <label for="name" class="form-label">Name</label>
             <input type="text" class="form-control" id="name" placeholder="Your Name" name="name" value="<%= editAddress.name %>" required>

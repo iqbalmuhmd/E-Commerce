@@ -1,61 +1,50 @@
 <%- include('../partials/user/header') %>
 
-<section class="bg-light p-4">
-  <div class="container mb-4">
-    <h2 class="mb-4">Edit Address</h2>
-    <div class="row justify-content-center">
-      <div class="col-lg-6 col-md-8">
-        <a href="/profile" class="btn btn-primary">Back to Profile</a>
-        <div style="margin-top: 10px; text-align: center; font-family: 'Poppins',sans-serif;">
-          <% 
-            if(typeof error !== "undefined"){
-          %>
-          <span style="color:#f00; font-weight: bold;"><%= error %></span>
-          <%
-            }
-          %>
+<section class="bg0 p-t-75 p-b-120">
+  <div class="container">
+    <div class="container-xxl flex-grow-1 container-p-y">
+      <h4 class="fw-bold mb-4">Edit Profile</h4>
+
+      <div class="row">
+        <div class="col-xxl">
+          <a class="btn btn-secondary" href="/profile" role="button">Back to Profile</a>
+          <div class="card mb-4" style="margin-top: 20px;">
+            <div style="margin-top: 5px; text-align: center; font-family: 'Poppins', sans-serif;">
+              <% if (typeof message !== "undefined") { %>
+                <span style="color: green; font-weight: bold;"><%= message %></span>
+              <% } %>
+              <% if (typeof error !== "undefined") { %>
+                <span style="color:#f00; font-weight: bold;"><%= error %></span>
+              <% } %>
+            </div>
+            <div class="card-body">
+              <form method="post" action="/edit-profile">
+                <input type="hidden" name="id" value="<%= user._id %>">
+
+                <div class="mb-3">
+                  <label for="name" class="form-label">Name</label>
+                  <input type="text" class="form-control" id="name" placeholder="Enter your name" name="name" value="<%= user.name %>" />
+                </div>
+
+                <div class="mb-3">
+                  <label for="email" class="form-label">Email</label>
+                  <input type="email" class="form-control" id="email" placeholder="Enter your email" name="email" value="<%= user.email %>" />
+                </div>
+
+                <div class="mb-3">
+                  <label for="phone" class="form-label">Phone</label>
+                  <input type="tel" class="form-control" id="phone" placeholder="Enter your phone number" name="phone" value="<%= user.phone %>" />
+                </div>
+
+                <div class="row justify-content-end">
+                  <div class="col-sm-10">
+                    <button type="submit" class="btn btn-success">Edit Profile</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
-
-        <form style="margin-top: 15px;" action="/edit-address" method="post">
-          <div class="mb-3">
-            <label for="username" class="form-label">Name</label>
-            <input type="text" class="form-control" id="name" placeholder="Your Name" name="name" value="<%= editAddress.name %>" required>
-          </div>
-          <div class="mb-3">
-            <label for="phoneNumber" class="form-label">Phone Number</label>
-            <input type="tel" class="form-control" id="phoneNumber" placeholder="Phone Number" name="phone" value="<%= editAddress.phone %>" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
-          </div>
-          <div class="mb-3">
-            <label for="country" class="form-label">Country</label>
-            <input type="text" class="form-control" id="country" placeholder="Country" name="country" value="<%= editAddress.country %>" required>
-          </div>
-          <div class="mb-3">
-            <label for="state" class="form-label">State</label>
-            <input type="text" class="form-control" id="state" placeholder="State" name="state" value="<%= editAddress.state %>" required>
-          </div>
-          <div class="mb-3">
-            <label for="district" class="form-label">District</label>
-            <input type="text" class="form-control" id="district" placeholder="District" name="district" value="<%= editAddress.district %>" required>
-          </div>
-          <div class="mb-3">
-            <label for="city" class="form-label">City</label>
-            <input type="text" class="form-control" id="city" placeholder="City" name="city" value="<%= editAddress.city %>" required>
-          </div>
-          <div class="mb-3">
-            <label for="pincode" class="form-label">Pincode</label>
-            <input type="text" class="form-control" id="pincode" placeholder="Pincode" name="pincode" value="<%= editAddress.pincode %>" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
-          </div>
-          <div class="mb-3">
-            <label for="streetAddress" class="form-label">Address</label>
-            <input type="text" class="form-control" id="streetAddress" placeholder="Your Address" name="address" value="<%= editAddress.address %>" required>
-          </div>
-
-          <input type="hidden" name="id" value="<%= editAddress._id %>">
-
-          <div class="d-grid">
-            <button type="submit" class="btn btn-success">Edit Address</button>
-          </div>
-        </form>
       </div>
     </div>
   </div>
@@ -80,7 +69,7 @@
 <!--===============================================================================================-->
 <script src="vendor/select2/select2.min.js"></script>
 <script>
-  $(".js-select2").each(function() {
+  $(".js-select2").each(function () {
     $(this).select2({
       minimumResultsForSearch: 20,
       dropdownParent: $(this).next('.dropDownSelect2')
@@ -92,7 +81,7 @@
 <!--===============================================================================================-->
 <script src="vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script>
-  $('.js-pscroll').each(function() {
+  $('.js-pscroll').each(function () {
     $(this).css('position', 'relative');
     $(this).css('overflow', 'hidden');
     var ps = new PerfectScrollbar(this, {
@@ -101,7 +90,7 @@
       wheelPropagation: false,
     });
 
-    $(window).on('resize', function() {
+    $(window).on('resize', function () {
       ps.update();
     })
   });

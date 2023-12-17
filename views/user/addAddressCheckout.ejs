@@ -1,0 +1,169 @@
+<%- include('../partials/user/header') %>
+
+<section class="bg-light p-4">
+  <div class="container mb-4">
+    <h2 class="mb-4">Add Address</h2>
+    <div class="row justify-content-center">
+      <div class="col-lg-6 col-md-8">
+        <a href="/profile" class="btn btn-primary">Back to Profile</a>
+        <div style="margin-top: 10px; text-align: center; font-family: 'Poppins',sans-serif;">
+          <% if(typeof error !== "undefined"){ %>
+          <span style="color:#f00; font-weight: bold;"><%= error %></span>
+          <% } %>
+        </div>
+
+        <form style="margin-top: 15px;" action="/add-address-co" method="post" onsubmit="return validateForm()">
+          <div class="mb-3">
+            <label for="username" class="form-label">Name</label>
+            <input type="text" class="form-control" id="username" placeholder="Your Name" name="name" required>
+          </div>
+          <div class="mb-3">
+            <label for="phoneNumber" class="form-label">Phone Number</label>
+            <input type="tel" class="form-control" id="phoneNumber" placeholder="Phone Number" name="phone" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
+            <small id="phoneNumberError" class="form-text text-danger"></small>
+          </div>
+          <div class="mb-3">
+            <label for="country" class="form-label">Country</label>
+            <input type="text" class="form-control" id="country" placeholder="Country" name="country" required>
+          </div>
+          <div class="mb-3">
+            <label for="state" class="form-label">State</label>
+            <input type="text" class="form-control" id="state" placeholder="State" name="state" required>
+          </div>
+          <div class="mb-3">
+            <label for="district" class="form-label">District</label>
+            <input type="text" class="form-control" id="district" placeholder="District" name="district" required>
+          </div>
+          <div class="mb-3">
+            <label for="city" class="form-label">City</label>
+            <input type="text" class="form-control" id="city" placeholder="City" name="city" required>
+          </div>
+          <div class="mb-3">
+            <label for="pincode" class="form-label">Pincode</label>
+            <input type="text" class="form-control" id="pincode" placeholder="Pincode" name="pincode" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
+          </div>
+          <div class="mb-3">
+            <label for="streetAddress" class="form-label">Address</label>
+            <input type="text" class="form-control" id="streetAddress" placeholder="Your Address" name="address" required>
+          </div>
+
+          <div class="d-grid">
+            <button type="submit" class="btn btn-success">Add Address</button>
+          </div>
+        </form>
+        <div class="mt-3 text-center">
+          <span id="error-message" class="text-danger"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/user/footer') %>
+
+<!-- Back to top -->
+<div class="btn-back-to-top" id="myBtn">
+  <span class="symbol-btn-back-to-top">
+    <i class="zmdi zmdi-chevron-up"></i>
+  </span>
+</div>
+
+<!--===============================================================================================-->
+<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+<!--===============================================================================================-->
+<script src="vendor/animsition/js/animsition.min.js"></script>
+<!--===============================================================================================-->
+<script src="vendor/bootstrap/js/popper.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+<!--===============================================================================================-->
+<script src="vendor/select2/select2.min.js"></script>
+<script>
+  $(".js-select2").each(function() {
+    $(this).select2({
+      minimumResultsForSearch: 20,
+      dropdownParent: $(this).next('.dropDownSelect2')
+    });
+  })
+</script>
+<!--===============================================================================================-->
+<script src="vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
+<!--===============================================================================================-->
+<script src="vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+<script>
+  $('.js-pscroll').each(function() {
+    $(this).css('position', 'relative');
+    $(this).css('overflow', 'hidden');
+    var ps = new PerfectScrollbar(this, {
+      wheelSpeed: 1,
+      scrollingThreshold: 1000,
+      wheelPropagation: false,
+    });
+
+    $(window).on('resize', function() {
+      ps.update();
+    })
+  });
+</script>
+<!--===============================================================================================-->
+<script src="js/main.js"></script>
+
+<!-- Form Validation Script -->
+<script>
+  // Function to check if a string is only whitespace
+  function isWhitespace(str) {
+    return !str.trim();
+  }
+
+  // Function to validate the form
+function validateForm() {
+  const name = document.getElementById("username").value;
+  const country = document.getElementById("country").value;
+  const state = document.getElementById("state").value;
+  const district = document.getElementById("district").value;
+  const city = document.getElementById("city").value;
+  const address = document.getElementById("streetAddress").value;
+
+  // Check if any field is only whitespace
+  if (isWhitespace(name) || isWhitespace(country) || isWhitespace(state) || isWhitespace(district) || isWhitespace(city) || isWhitespace(address)) {
+    document.getElementById("error-message").innerHTML = "Name, Country, State, District, City, and Address should contain characters only.";
+    return false;
+  }
+
+  // Validate characters using regex
+  const charRegex = /^[A-Za-z\s]+$/; // Allow letters and spaces
+  if (!charRegex.test(name) || !charRegex.test(country) || !charRegex.test(state) || !charRegex.test(district) || !charRegex.test(city)) {
+    document.getElementById("error-message").innerHTML = "Name, Country, State, District, and City should contain characters only.";
+    return false;
+  }
+
+  // Validate address field allowing commas, full stops, and spaces
+  const addressRegex = /^[A-Za-z0-9,.\s]+$/;
+  if (!addressRegex.test(address)) {
+    document.getElementById("error-message").innerHTML = "Address should contain letters, numbers, commas, full stops, and spaces only.";
+    return false;
+  }
+}
+
+// Function to validate the phone number
+function validatePhoneNumber() {
+  var phoneNumberInput = document.getElementById('phoneNumber');
+  var phoneNumber = phoneNumberInput.value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+  var phoneNumberError = document.getElementById('phoneNumberError');
+
+  if (phoneNumber.length !== 10 || isNaN(phoneNumber)) {
+    phoneNumberError.innerHTML = 'Please enter a valid 10-digit phone number.';
+    phoneNumberInput.classList.add('is-invalid');
+    return false;
+  } else {
+    phoneNumberError.innerHTML = ''; // Clear the error message
+    phoneNumberInput.classList.remove('is-invalid');
+  }
+
+  return true;
+}
+
+// Attach the validation function to the form's onsubmit event
+document.getElementById('addAddressForm').onsubmit = function () {
+  validatePhoneNumber();
+  return validateForm(); // Return the result of the form validation
+};

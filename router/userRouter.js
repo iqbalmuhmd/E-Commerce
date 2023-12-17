@@ -23,6 +23,8 @@ const mainController = require('../controller/user/mainController')
 const profileController = require('../controller/user/profileController')
 const imageUpload = require('../middleware/imageUpload')
 const cartController = require('../controller/user/cart&checkoutController')
+const checkoutController = require('../controller/user/cart&checkoutController')
+const orderController = require('../controller/user/orderController')
 
 
 
@@ -85,11 +87,24 @@ userRouter.post('/edit-address', userAuth.isLogin, profileController.editAddress
 // Delete Address
 userRouter.get('/delete-address', userAuth.isLogin, profileController.deleteAddress);
 
-// Cart Routes
+// Cart 
 userRouter.get('/cart', userAuth.isLogin, cartController.loadCart);
 userRouter.get('/addToCart', userAuth.isLogin, cartController.addToCart);
 userRouter.post('/updateCartItem/:id', userAuth.isLogin, cartController.updateCartItem);
 userRouter.get('/delete-cart', userAuth.isLogin, cartController.deleteCart);
 
+// Checkout
+userRouter.get('/checkout', userAuth.isLogin, checkoutController.loadCheckOut);
+userRouter.get('/edit-address-co', userAuth.isLogin, checkoutController.loadEditAddressCO);
+userRouter.post('/edit-address-co', userAuth.isLogin, checkoutController.editAddressCO);
+userRouter.get('/add-address-co', userAuth.isLogin, checkoutController.loadAddAddressCO);
+userRouter.post('/add-address-co', userAuth.isLogin, checkoutController.addAddressCO);
+
+userRouter.post('/order-product', checkoutController.placeOrder)
+
+
+userRouter.get('/order-success', orderController.loadOrderSuccess)
+userRouter.get('/orders', orderController.loadOrders)
+userRouter.get('/order-history', orderController.loadOrdersHistory)
 
 module.exports = userRouter

@@ -1,20 +1,18 @@
-const mongoose = require('mongoose')
-const User = require('../../model/userModel')
-const Address = require('../../model/addressModel')
-const Product = require('../../model/productModel')
-const session = require('express-session')
+const mongoose = require('mongoose');
+const User = require('../../model/userModel');
+const Address = require('../../model/addressModel');
+const Product = require('../../model/productModel');
+const Order = require('../../model/orderModel');
 
-
-const loadCart = async(req,res) => {
+const loadCart = async (req, res) => {
     try {
-        const user = await User.findById(req.session.user_id)
+        const user = await User.findById(req.session.user_id);
         const userData = await User.findById(req.session.user_id).populate('cart.product');
-        res.render('user/cart', { user , userData })
+        res.render('user/cart', { user, userData });
     } catch (error) {
         console.log(error.message);
     }
-}
-
+};
 
 const addToCart = async (req, res) => {
     try {
@@ -35,27 +33,23 @@ const addToCart = async (req, res) => {
 
         userData.cart.push(obj);
         await userData.save();
+       
+        const referer = req.get('Referer');
+        let redirectUrl;
 
-        // Check the Referer header to determine the redirect URL
-const referer = req.get('Referer');
-let redirectUrl;
+        if (referer && referer.includes('/productDetail')) {
+            redirectUrl = `/productDetail?id=${productData._id}`;
+        } else if (referer && referer.includes('/shop')) {
+            redirectUrl = '/shop';
+        } else {
+            redirectUrl = '/home';
+        }
 
-if (referer && referer.includes('/productDetail')) {
-  redirectUrl = `/productDetail?id=${productData._id}`;
-} else if (referer && referer.includes('/shop')) {
-  redirectUrl = '/shop';
-} else {
-  redirectUrl = '/home'; // Replace '/home' with the actual home page URL
-}
-
-res.redirect(redirectUrl);
-
-
+        res.redirect(redirectUrl);
     } catch (error) {
         console.log(error.message);
     }
 };
-
 
 const updateCartItem = async (req, res) => {
     try {
@@ -65,17 +59,17 @@ const updateCartItem = async (req, res) => {
         if (cartItem) {
             const product = await Product.findById(cartItem.product);
 
-            let grandTotal; 
+            let grandTotal;
 
-            if (req.body.type === "decrement") {
+            if (req.body.type === 'decrement') {
                 if (cartItem.quantity !== 1) {
                     cartItem.quantity--;
                 }
-            } else if (req.body.type === "increment") {
-                if ((cartItem.quantity + 1) <= product.quantity) {
+            } else if (req.body.type === 'increment') {
+                if (cartItem.quantity + 1 <= product.quantity) {
                     cartItem.quantity++;
                 } else {
-                    return res.status(200).json({ message: "Stock limit exceeded" });
+                    return res.status(200).json({ message: 'Stock limit exceeded' });
                 }
             }
 
@@ -92,7 +86,7 @@ const updateCartItem = async (req, res) => {
             }
 
             grandTotal = currentUser.cart.reduce((total, element) => {
-                return total + (element.quantity * element.product.price);
+                return total + element.quantity * element.product.price;
             }, 0);
 
             currentUser.totalCartAmount = grandTotal;
@@ -100,51 +94,190 @@ const updateCartItem = async (req, res) => {
             await currentUser.save();
 
             return res.status(200).json({
-                message: "Success",
+                message: 'Success',
                 quantity: cartItem.quantity,
                 totalPrice: product.price * cartItem.quantity,
                 grandTotal,
-                insufficientStock,
+                insufficientStock
             });
         } else {
             return res.status(404).json({ message: "Product not found in the user's cart." });
         }
     } catch (error) {
-        console.error(error); 
-        res.render("error/internalError", { error });
+        console.error(error);
+        res.render('error/internalError', { error });
     }
 };
 
-
 const deleteCart = async (req, res) => {
-
     try {
+        const userData = await User.findById(req.session.user_id);
 
-        const userData = await User.findById(req.session.user_id)
-
-        const cartId = req.query.cartId
+        const cartId = req.query.cartId;
 
         const itemIndex = userData.cart.findIndex(item => item._id.toString() === cartId);
 
-        userData.totalCartAmount -= userData.cart[itemIndex].total
+        userData.totalCartAmount -= userData.cart[itemIndex].total;
 
         userData.cart.splice(itemIndex, 1);
         await userData.save();
 
-        res.redirect("/cart")
-
+        res.redirect('/cart');
     } catch (error) {
         console.log(error.message);
     }
+};
 
-}
-  
+const loadCheckOut = async (req, res) => {
+    try {
+        const userId = await User.findById(req.session.user_id);
+        const user = await User.findById(userId).populate('cart.product');
+        const userAddress = await Address.find({ userId: req.session.user_id });
+        res.render('user/checkout', { user, userAddress });
+    } catch (error) {
+        console.log(error.message);
+    }
+};
 
+const loadEditAddressCO = async (req, res) => {
+    try {
+        const id = req.query.id;
+        const user = await User.findById(req.session.user_id);
 
+        const editAddress = await Address.findById(id);
+
+        if (editAddress) {
+            res.render('user/editAddressCheckout', { user, editAddress });
+        } else {
+            res.redirect('/checkout');
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+
+const editAddressCO = async (req, res) => {
+    try {
+        const { name, phone, country, state, district, city, pincode, address } = req.body;
+        const user = req.session.user_id;
+
+        if (user) {
+            const addressId = req.body.id;
+            const editAddress = await Address.findById(addressId);
+            if (editAddress) {
+                await Address.updateOne({ _id: addressId }, { $set: { name, phone, country, state, district, city, pincode, address } });
+            }
+        }
+
+        res.redirect('/checkout');
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+
+const loadAddAddressCO = async (req, res) => {
+    try {
+        const userAddress = await Address.find({ userid: req.session.user_id });
+        const user = await User.findById(req.session.user_id);
+        if (userAddress.length < 3) {
+            res.render('user/addAddressCheckout', { user });
+        } else {
+            res.redirect('/checkout');
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+
+const addAddressCO = async (req, res) => {
+    try {
+        const { name, phone, country, state, district, city, pincode, address } = req.body;
+        const user = await User.findById(req.session.user_id);
+
+        // Validate phone (10 digits)
+        if (!/^\d{10}$/.test(phone)) {
+            return res.render('user/addAddress', { user, error: 'Phone number should be 10 digits.' });
+        }
+        const check = await Address.find({ userId: req.session.user_id });
+
+        if (check.length > 0) {
+            const addAddress = new Address({
+                userId: req.session.user_id, name, phone, country, state, district, city, pincode, address
+            });
+            addAddress.save();
+        } else {
+            const addAddress = new Address({
+                userId: req.session.user_id, name, phone, country, state, district, city, pincode, address, default: true
+            });
+            addAddress.save();
+        }
+
+        res.redirect('/checkout');
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+
+const placeOrder = async (req, res) => {
+    try {
+        const selectedAddressId = req.body.address;
+        const selectedPaymentMethod = req.body.paymentMethod;
+
+        const userId = req.session.user_id;
+        const user = await User.findById(userId).populate('cart.product');
+        const selectedAddress = await Address.findById(selectedAddressId);
+
+        const products = user.cart.map((cartItem) => {
+            return {
+                product: cartItem.product,
+                quantity: cartItem.quantity,
+                total: cartItem.quantity * cartItem.product.price
+            };
+        });
+        
+        const orderId = Math.floor(100000 + Math.random() * 900000);
+
+        const order = new Order({
+            user: userId,
+            products: products,
+            totalAmount: user.totalCartAmount,
+            paymentMethod: selectedPaymentMethod,
+            deliveryAddress: {
+                _id: selectedAddress._id,
+                userId: userId,
+                name: selectedAddress.name,
+                phone: selectedAddress.phone,
+                country: selectedAddress.country,
+                state: selectedAddress.state,
+                district: selectedAddress.district,
+                city: selectedAddress.city,
+                pincode: selectedAddress.pincode,
+                address: selectedAddress.address
+            },
+            orderId: orderId,
+        });
+
+        await order.save();
+
+        user.totalCartAmount = 0;
+        user.cart = [];
+        await user.save();
+
+        res.redirect('/order-success');
+    } catch (error) {
+        console.error(error.message);
+    }
+};
 
 module.exports = {
     loadCart,
     addToCart,
     updateCartItem,
-    deleteCart
-}
+    deleteCart,
+    loadCheckOut,
+    loadEditAddressCO,
+    editAddressCO,
+    loadAddAddressCO,
+    addAddressCO,
+    placeOrder
+};
