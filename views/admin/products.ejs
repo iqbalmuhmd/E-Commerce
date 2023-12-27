@@ -51,7 +51,11 @@
                             </button>
                             <ul class="dropdown-menu" style="position: absolute; top: 100%; left: 0; z-index: 1000; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
                               <li><a class="dropdown-item edit-btn" href="/admin/products/edit-product?id=<%= products[i]._id %>" style="color: #212529;">Edit</a></li>
-                              <li><a class="dropdown-item delete-btn" href="/admin/products/delete-product?id=<%= products[i]._id %>" style="color: #212529;">Delete</a></li>
+                              <% if (products[i].blocked == false) { %>
+                                <li><a class="dropdown-item edit-btn" href="/admin//products/block-product?id=<%= products[i]._id %>&&status=true" style="color: #212529;">Block</a></li>
+                                <% } else { %>
+                                <li><a class="dropdown-item edit-btn" href="/admin//products/block-product?id=<%= products[i]._id %>&&status=false" style="color: #212529;">Unblock</a></li>
+                              <% } %>
                             </ul>
                           </div>
                         </td>

@@ -3,8 +3,7 @@ const User = require("../../model/userModel");
 const getUser = async (req, res) => {
   try {
     const users = await User.find();
-    if (users) {
-      console.log(users);
+    if (users) {      
       return res.render('admin/users', { users });
     }
   } catch (error) {

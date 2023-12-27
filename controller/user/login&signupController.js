@@ -6,7 +6,7 @@ const nodemailer = require('nodemailer');
 
 const loadHome = async (req, res) => {
   try {
-    const products = await Product.find();
+    const products = await Product.find({blocked: false});
     const user = await User.findById(req.session.user_id);
     return res.render('user/index', { products, user });
   } catch (error) {

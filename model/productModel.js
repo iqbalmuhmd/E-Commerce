@@ -24,7 +24,7 @@ const productSchema = new mongoose.Schema({
   images: [String],
   additionalInfo: {
     type: String,
-  },
+  }, 
   blocked: {
     type: Boolean,
     default: false,

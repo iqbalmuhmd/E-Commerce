@@ -1,0 +1,137 @@
+<!-- views/admin/orders.ejs -->
+
+<%- include('../partials/admin/header') %>
+<%- include('../partials/admin/sidePanel') %>
+
+<div class="layout-page">
+    <!-- Content wrapper -->
+    <div class="content-wrapper">
+        <!-- Content -->
+        <div class="container-xxl flex-grow-1 container-p-y">
+            <!-- Custom Table Design -->
+            <div class="card" style="margin-top: 20px; overflow-x: auto;">
+                <h5 class="card-header">Orders</h5>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover table-sm">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Customer</th>
+                                <th>Products</th>
+                                <th>Address</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Payment Option</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (orders && orders.length > 0) { %>
+                                <% orders.forEach(order => { %>
+                                    <tr>
+                                        <td>
+                                            <strong><%= order.deliveryAddress.name %></strong><br>
+                                            <%= order.deliveryAddress.email %>
+                                        </td>
+                                        <td>
+                                            <ul class="list-unstyled">
+                                                <% order.products.forEach(product => { %>
+                                                    <li>
+                                                        <% if (!product.isCancelled) { %>
+                                                            <%= product.product.productName %> : <%= product.quantity %>
+                                                        <% } else { %>
+                                                            <del class="text-danger"><%= product.product.productName %> : <%= product.quantity %></del>
+                                                        <% } %>
+                                                    </li>
+                                                <% }); %>
+                                            </ul>
+                                        </td>
+                                        <td>
+                                            <address>
+                                                <%= order.deliveryAddress.name %>,<br>
+                                                <%= order.deliveryAddress.phone %>,<br>
+                                                <%= order.deliveryAddress.pincode %>,<br>
+                                                
+                                                <%= order.deliveryAddress.city %>,<br>
+                                                <%= order.deliveryAddress.district %>,<br>
+                                                <%= order.deliveryAddress.state %>,<br>
+                                                <%= order.deliveryAddress.country %>
+                                            </address>
+                                        </td>
+                                        <td>₹<%= order.totalAmount %></td>
+                                        <td>
+                                            <% if (order.isCancelled === true) { %>
+                                                <h6 class="text-danger">Canceled</h6>
+                                            <% } else if (order.returnRequested == 'Complete') { %>
+                                                <span class="text-success">Return Completed</span>
+                                            <% } else if (order.status == 'Delivered' && order.isReturn == false) { %>
+                                                <span class="text-success">Delivered</span>
+                                            <% } else if (!order.isReturn) { %>
+                                                <!-- Display the dropdown for order status -->
+                                                <div class="custom-dropdown">
+                                                    <div class="btn-group">
+                                                        <button type="button" class="btn btn-sm btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <%= order.status %>
+                                                        </button>
+                                                        <div class="dropdown-menu">
+                                                            <a class="dropdown-item" href="/admin/order/action-update?id=<%= order._id %>&&status=Processing">Processing</a>
+                                                            <a class="dropdown-item" href="/admin/order/action-update?id=<%= order._id %>&&status=Shipped">Shipped</a>
+                                                            <a class="dropdown-item" href="/admin/order/action-update?id=<%= order._id %>&&status=Delivered">Delivered</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <% } else { %>
+                                                <!-- Display a new dropdown for return status -->
+                                                <div class="custom-dropdown">
+                                                    <div class="btn-group">
+                                                        <button type="button" class="btn btn-sm btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            Return <%= order.returnRequested %>
+                                                        </button>
+                                                        <div class="dropdown-menu">
+                                                            <a class="dropdown-item" href="/admin/order/return-action-update?id=<%= order._id %>&&status=Approved">Approved</a>
+                                                            <a class="dropdown-item" href="/admin/order/return-action-update?id=<%= order._id %>&&status=Rejected">Rejected</a>
+                                                            <a class="dropdown-item" href="/admin/order/return-action-update?id=<%= order._id %>&&status=Complete">Complete</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <% } %>
+                                        </td>                                                                                                                                                                
+                                        <td><%= order.paymentMethod %></td>
+                                    </tr>
+                                <% }); %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="6">Products Not Found</td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!--/ Custom Table Design -->
+        </div>
+        <!-- / Content -->
+
+        <div class="content-backdrop fade"></div>
+    </div>
+    <!-- Content wrapper -->
+</div>
+
+<script>
+    // Close the dropdowns when clicking outside
+    window.addEventListener('click', function (e) {
+        const dropdowns = document.querySelectorAll('.custom-dropdown');
+        dropdowns.forEach(dropdown => {
+            if (!dropdown.contains(e.target)) {
+                dropdown.querySelector('.dropdown-menu').classList.remove('show');
+            }
+        });
+    });
+
+    // Prevent the dropdowns from closing when clicking inside
+    document.querySelectorAll('.custom-dropdown').forEach(dropdown => {
+        dropdown.addEventListener('click', function (e) {
+            e.stopPropagation();
+            this.querySelector('.dropdown-menu').classList.toggle('show');
+        });
+    });
+</script>

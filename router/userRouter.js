@@ -100,11 +100,15 @@ userRouter.post('/edit-address-co', userAuth.isLogin, checkoutController.editAdd
 userRouter.get('/add-address-co', userAuth.isLogin, checkoutController.loadAddAddressCO);
 userRouter.post('/add-address-co', userAuth.isLogin, checkoutController.addAddressCO);
 
-userRouter.post('/order-product', checkoutController.placeOrder)
+// Place Order
+userRouter.post('/order-product', userAuth.isLogin, checkoutController.placeOrder);
 
+// Order Success and History
+userRouter.get('/order-success', userAuth.isLogin, orderController.loadOrderSuccess);
+userRouter.get('/orders', userAuth.isLogin, orderController.loadOrders);
+userRouter.get('/order-history', userAuth.isLogin, orderController.loadOrdersHistory);
+userRouter.post('/cancel-order', orderController.cancelProduct)
+userRouter.post('/return-order', orderController.returnProduct)
 
-userRouter.get('/order-success', orderController.loadOrderSuccess)
-userRouter.get('/orders', orderController.loadOrders)
-userRouter.get('/order-history', orderController.loadOrdersHistory)
 
 module.exports = userRouter

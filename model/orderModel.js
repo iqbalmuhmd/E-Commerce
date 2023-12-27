@@ -20,23 +20,25 @@ const orderSchema = mongoose.Schema({
             total: {
                 type: Number,
                 required: true,
-            },
-            isCancelled: {
-                type: Boolean,
-                default: false,
-            },
-            returnRequested: {
-                type: String,
-                enum: ['Nil', 'Pending', 'Approved', 'Rejected', 'Completed'],
-                default: 'Nil',
-            },
-            cancelRequested: {
-                type: String,
-                enum: ['Nil', 'Pending', 'Approved', 'Rejected', 'Completed'],
-                default: 'Nil',
-            },
+            },            
         },
     ],
+    isCancelled: {
+        type: Boolean,
+        default: false,
+    },
+    isReturn: {
+        type: Boolean,
+        default: false,
+    },
+    returnRequested: {
+        type: String,
+        enum: ['Pending', 'Approved', 'Rejected', 'Complete'],
+        default: 'Pending',
+    },
+    orderCancelReason:{
+        type:String,  
+    },    
     totalAmount: {
         type: Number,
         required: true,
@@ -76,10 +78,7 @@ const orderSchema = mongoose.Schema({
         type: String,
         enum: ['Processing', 'Shipped', 'Delivered', 'Cancelled'],
         default: 'Processing',
-    },
-    razorpayOrderId: {
-        type: String,
-    },
+    },    
     transactionId: {
         type: String,
     }

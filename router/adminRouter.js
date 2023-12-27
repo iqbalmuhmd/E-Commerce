@@ -24,6 +24,7 @@ const userController = require('../controller/admin/userController')
 const productController = require('../controller/admin/productsController')
 const categoryController = require('../controller/admin/categoryController')
 const imageUpload = require('../middleware/imageUpload')
+const orderController = require('../controller/admin/orderController')
 
 
 
@@ -55,11 +56,16 @@ adminRouter.get('/category/delete-category', adminAuth.adminLogin, categoryContr
 adminRouter.get('/products', adminAuth.adminLogin, productController.loadProducts);
 adminRouter.get('/products/add-product', adminAuth.adminLogin, productController.loadAddProduct);
 adminRouter.post('/products/add-product', adminAuth.adminLogin, imageUpload.uploadProductImages, imageUpload.resizeProductImages, productController.addProductPost);
-adminRouter.get('/products/delete-product', adminAuth.adminLogin, productController.deleteProduct);
+adminRouter.get('/products/block-product', adminAuth.adminLogin, productController.blockProduct);
 adminRouter.get('/products/edit-product', adminAuth.adminLogin, productController.loadEditProduct);
 adminRouter.post("/products/:id/img/delete", adminAuth.adminLogin, productController.destroyProductImage);
 adminRouter.post('/products/:id/img/add', adminAuth.adminLogin, imageUpload.uploadProductImages, imageUpload.resizeProductImages, productController.updateProductImages);
 adminRouter.post('/products/edit-product', adminAuth.adminLogin, productController.editProduct);
+
+//Orders
+adminRouter.get('/orders', adminAuth.adminLogin, orderController.loadOrders)
+adminRouter.get('/order/action-update', adminAuth.adminLogin, orderController.updateActionOrder);
+adminRouter.get('/order/return-action-update', orderController.updateActionReturn)
 
 
 

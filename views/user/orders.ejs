@@ -152,7 +152,8 @@
     }
 
     @keyframes fadeInOut {
-        0%, 100% {
+        0%,
+        100% {
             opacity: 0;
         }
 
@@ -165,6 +166,7 @@
         animation: fadeInOut 5s ease infinite;
     }
 </style>
+
 
 <link rel="stylesheet" href="https://allyoucan.cloud/cdn/icofont/1.0.1/icofont.css"
     integrity="sha384-jbCTJB16Q17718YM9U22iJkhuGbS0Gd2LjaWb4YJEZToOPmnKDjySVa323U+W7Fv" crossorigin="anonymous">
@@ -208,7 +210,6 @@
                             <% orders.forEach(order => { %>
                                 <div class="bg-white card mb-4 order-list shadow-sm">
                                     <div class="gold-members p-4">
-                                        <a href="#"></a>
                                         <!-- Product Section -->
                                         <% if (order.products && order.products.length > 0) { %>
                                             <% order.products.forEach(product => { %>
@@ -219,16 +220,18 @@
                                                     </a>
                                                     <div class="media-body">
                                                         <a href="/order-history?orderId=<%= order._id %>">
-                                                            <% if (order.status === 'Processing') { %>
-                                                                <span class="float-right text-info order-status processing-animation">
-                                                                    <%= order.status %>
-                                                                    <i class="icofont-check-circled text-success"></i>
-                                                                </span>
-                                                            <% } else { %>
-                                                                <span class="float-right text-info order-status">
-                                                                    <%= order.status %>
-                                                                    <i class="icofont-check-circled text-success"></i>
-                                                                </span>
+                                                            <% if (!order.isCancelled) { %>
+                                                                <% if (order.status === 'Processing') { %>
+                                                                    <span class="float-right text-info order-status processing-animation">
+                                                                        <%= order.status %>
+                                                                        <i class="icofont-check-circled text-success"></i>
+                                                                    </span>
+                                                                <% } else { %>
+                                                                    <span class="float-right text-info order-status">
+                                                                        <%= order.status %>
+                                                                        <i class="icofont-check-circled text-success"></i>
+                                                                    </span>
+                                                                <% } %>
                                                             <% } %>
                                                         </a>
                                                         <h6 class="mb-2">
@@ -237,11 +240,12 @@
                                                                 <%= product.product.productName %>
                                                             </a>
                                                         </h6>
-
-                                                        <p class="text-gray mb-1"><i class="icofont-location-arrow"></i>
+                                                        <p class="text-gray mb-1"><i
+                                                                class="icofont-location-arrow"></i>
                                                             <%= order.deliveryAddress.address %>
                                                         </p>
-                                                        <p class="text-gray mb-3"><i class="icofont-list"></i> ORDER #<%= order.orderId %> <i
+                                                        <p class="text-gray mb-3"><i class="icofont-list"></i> ORDER
+                                                            #<%= order.orderId %> <i
                                                                 class="icofont-clock-time ml-2"></i>
                                                             <%= order.orderDate.toLocaleDateString() %>
                                                         </p>
@@ -255,14 +259,185 @@
                                         <% } else { %>
                                             <p>No products in this order.</p>
                                         <% } %>
-
                                         <div class="float-right">
                                             <% if (order.status === 'Delivered') { %>
-                                                <a class="btn btn-sm btn-primary" href="#"><i
-                                                        class="icofont-refresh"></i> RETURN</a>
+                                                <% if (!order.isReturn) { %>
+                                                    <button type="button" class="btn btn-sm btn-primary"
+                                                        data-toggle="modal"
+                                                        data-target="#returnModal<%= order._id %>">
+                                                        <i class="icofont-refresh"></i> RETURN
+                                                    </button>
+                                                <% } else { %>
+                                                    <% if (order.returnRequested === 'Complete') { %>
+                                                        <span class="text-success">Return Completed</span>
+                                                    <% } else { %>
+                                                        <span class="text-warning">Return Requested: <%= order.returnRequested %></span>
+                                                    <% } %>                                                    
+                                                <% } %>                                                
+                                                <div class="modal fade"
+                                                    id="returnModal<%= order._id %>"
+                                                    tabindex="-1" role="dialog"
+                                                    aria-labelledby="returnModalLabel<%= order._id %>"
+                                                    aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="returnModalLabel<%= order._id %>">Return Order
+                                                                </h5>
+                                                                <button type="button" class="close"
+                                                                    data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <form action="/return-order" method="post">
+                                                                <input type="hidden" name="orderId"
+                                                                    value="<%= order._id %>">
+                                                                <div class="modal-body">
+                                                                    <p>Select a reason for return:</p>
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="radio"
+                                                                            name="returnReason" id="wrongItem<%= order._id %>"
+                                                                            value="wrong_item" required>
+                                                                        <label class="form-check-label"
+                                                                            for="wrongItem<%= order._id %>">Wrong Item Received
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="radio"
+                                                                            name="returnReason" id="defectiveItem<%= order._id %>"
+                                                                            value="defective_item" required>
+                                                                        <label class="form-check-label"
+                                                                            for="defectiveItem<%= order._id %>">Defective Item
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="radio"
+                                                                            name="returnReason" id="sizeIssue<%= order._id %>"
+                                                                            value="size_issue" required>
+                                                                        <label class="form-check-label"
+                                                                            for="sizeIssue<%= order._id %>">Size Issue
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="radio"
+                                                                            name="returnReason" id="notAsDescribed<%= order._id %>"
+                                                                            value="not_as_described" required>
+                                                                        <label class="form-check-label"
+                                                                            for="notAsDescribed<%= order._id %>">Not as Described
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="radio"
+                                                                            name="returnReason" id="changedMind<%= order._id %>"
+                                                                            value="changed_mind" required>
+                                                                        <label class="form-check-label"
+                                                                            for="changedMind<%= order._id %>">Changed Mind
+                                                                        </label>
+                                                                    </div>
+
+                                                                    <div class="mt-3">
+                                                                        <label for="returnComment<%= order._id %>">Optional Comment:</label>
+                                                                        <textarea class="form-control" id="returnComment<%= order._id %>"
+                                                                            name="returnComment" rows="3"></textarea>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary"
+                                                                        data-dismiss="modal">Close</button>
+                                                                    <button type="submit" class="btn btn-primary">Confirm
+                                                                        Return</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             <% } else { %>
-                                                <a class="btn btn-sm btn-primary" href="#"><i
-                                                        class="icofont-refresh"></i> CANCEL</a>
+                                                <% if (!order.isCancelled) { %>
+                                                    <button type="button" class="btn btn-sm btn-primary"
+                                                        data-toggle="modal"
+                                                        data-target="#cancelModal<%= order._id %>">
+                                                        <i class="icofont-refresh"></i> CANCEL
+                                                    </button>
+                                                <% } else { %>
+                                                    <p class="text-danger">Cancelled</p>
+                                                <% } %>
+                                                <div class="modal fade"
+                                                    id="cancelModal<%= order._id %>"
+                                                    tabindex="-1" role="dialog"
+                                                    aria-labelledby="cancelModalLabel<%= order._id %>"
+                                                    aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="cancelModalLabel<%= order._id %>">Cancel Order
+                                                                </h5>
+                                                                <button type="button" class="close"
+                                                                    data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <form action="/cancel-order" method="post">
+                                                                <input type="hidden" name="orderId"
+                                                                    value="<%= order._id %>">
+                                                                <div class="modal-body">
+                                                                    <p>Select a reason for cancellation:</p>
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="radio"
+                                                                            name="cancelReason" id="changeOfMind<%= order._id %>"
+                                                                            value="change_of_mind" required>
+                                                                        <label class="form-check-label"
+                                                                            for="changeOfMind<%= order._id %>">Change of Mind
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="radio"
+                                                                            name="cancelReason" id="priceTooHigh<%= order._id %>"
+                                                                            value="price_too_high" required>
+                                                                        <label class="form-check-label"
+                                                                            for="priceTooHigh<%= order._id %>">Price Too High
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="radio"
+                                                                            name="cancelReason" id="itemUnavailable<%= order._id %>"
+                                                                            value="item_unavailable" required>
+                                                                        <label class="form-check-label"
+                                                                            for="itemUnavailable<%= order._id %>">Item Unavailable
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="radio"
+                                                                            name="cancelReason" id="deliveryIssues<%= order._id %>"
+                                                                            value="delivery_issues" required>
+                                                                        <label class="form-check-label"
+                                                                            for="deliveryIssues<%= order._id %>">Delivery Issues
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="radio"
+                                                                            name="cancelReason" id="otherReason<%= order._id %>"
+                                                                            value="other_reason" required>
+                                                                        <label class="form-check-label"
+                                                                            for="otherReason<%= order._id %>">Other Reason
+                                                                        </label>
+                                                                    </div>
+
+                                                                    <div class="mt-3">
+                                                                        <label for="cancelComment<%= order._id %>">Optional Comment:</label>
+                                                                        <textarea class="form-control" id="cancelComment<%= order._id %>"
+                                                                            name="cancelComment" rows="3"></textarea>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary"
+                                                                        data-dismiss="modal">Close</button>
+                                                                    <button type="submit" class="btn btn-primary">Confirm
+                                                                        Cancel</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             <% } %>
                                         </div>
                                         <p class="mb-0 text-black text-primary pt-2"><span

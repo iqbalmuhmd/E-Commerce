@@ -41,9 +41,9 @@ const addProductPost = async (req, res) => {
   }
 };
 
-const deleteProduct = async (req, res) => {
+const blockProduct = async (req, res) => {
   try {
-    await Product.findByIdAndDelete({ _id: req.query.id });
+    await Product.updateOne({ _id: req.query.id }, { $set: { blocked: req.query.status } });
     res.redirect("/admin/products");
   } catch (error) {
     console.log(error.message);
@@ -125,7 +125,7 @@ module.exports = {
   loadProducts,
   loadAddProduct,
   addProductPost,
-  deleteProduct,
+  blockProduct,
   loadEditProduct,
   editProduct,
   destroyProductImage,

@@ -3,7 +3,7 @@ const User = require('../../model/userModel')
 
 const loadShop = async(req,res) =>{
     try {
-        const products = await Product.find();
+        const products = await Product.find({blocked: false});
         const user = await User.findById(req.session.user_id);
         res.render('user/shop',{ products, user })
     } catch (error) {
