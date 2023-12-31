@@ -102,13 +102,20 @@ userRouter.post('/add-address-co', userAuth.isLogin, checkoutController.addAddre
 
 // Place Order
 userRouter.post('/order-product', userAuth.isLogin, checkoutController.placeOrder);
+userRouter.post('/saveRzpOrder', userAuth.isLogin, checkoutController.saveRzpOrder);
 
 // Order Success and History
 userRouter.get('/order-success', userAuth.isLogin, orderController.loadOrderSuccess);
 userRouter.get('/orders', userAuth.isLogin, orderController.loadOrders);
 userRouter.get('/order-history', userAuth.isLogin, orderController.loadOrdersHistory);
-userRouter.post('/cancel-order', orderController.cancelProduct)
-userRouter.post('/return-order', orderController.returnProduct)
+userRouter.post('/cancel-order', orderController.cancelProduct);
+userRouter.post('/return-order', orderController.returnProduct);
+
+// Wishlist
+userRouter.get('/wishlist', userAuth.isLogin, mainController.loadWishlist);
+userRouter.get('/addToWishlist', userAuth.isLogin, mainController.addToWishlist);
+userRouter.get('/add-to-cart', userAuth.isLogin, mainController.addToCartWL);
+userRouter.get('/delete-wishlist', userAuth.isLogin, mainController.deleteWishlist);
 
 
 module.exports = userRouter

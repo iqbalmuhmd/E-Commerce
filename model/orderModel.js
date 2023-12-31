@@ -44,7 +44,7 @@ const orderSchema = mongoose.Schema({
         required: true,
     },
     orderId: {
-        type: Number,
+        type: String,
         required: true,
         unique: true,
     },
@@ -79,6 +79,9 @@ const orderSchema = mongoose.Schema({
         enum: ['Processing', 'Shipped', 'Delivered', 'Cancelled'],
         default: 'Processing',
     },    
+    razorpayOrderId: {
+        type: String,
+    },
     transactionId: {
         type: String,
     }

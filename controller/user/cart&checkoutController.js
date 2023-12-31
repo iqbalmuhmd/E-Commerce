@@ -3,6 +3,7 @@ const User = require('../../model/userModel');
 const Address = require('../../model/addressModel');
 const Product = require('../../model/productModel');
 const Order = require('../../model/orderModel');
+const razorpay = require('../../controller/utils/razorpayConfig')
 
 const loadCart = async (req, res) => {
     try {
@@ -35,15 +36,17 @@ const addToCart = async (req, res) => {
         await userData.save();
        
         const referer = req.get('Referer');
-        let redirectUrl;
+let redirectUrl;
 
-        if (referer && referer.includes('/productDetail')) {
-            redirectUrl = `/productDetail?id=${productData._id}`;
-        } else if (referer && referer.includes('/shop')) {
-            redirectUrl = '/shop';
-        } else {
-            redirectUrl = '/home';
-        }
+if (referer && referer.includes('/productDetail')) {
+    redirectUrl = `/productDetail?id=${productData._id}`;
+} else if (referer && referer.includes('/shop')) {
+    redirectUrl = '/shop';
+} else if (referer && referer.includes('/wishlist')) {
+    redirectUrl = '/wishlist'; 
+} else {
+    redirectUrl = '/home';
+}
 
         res.redirect(redirectUrl);
     } catch (error) {
@@ -234,7 +237,7 @@ const placeOrder = async (req, res) => {
                 total: cartItem.quantity * cartItem.product.price
             };
         });
-        
+
         const orderId = Math.floor(100000 + Math.random() * 900000);
 
         const order = new Order({
@@ -256,8 +259,30 @@ const placeOrder = async (req, res) => {
             },
             orderId: orderId,
         });
+        if(selectedPaymentMethod === 'COD'){
+            await order.save();
+        } else if(selectedPaymentMethod === 'Razorpay') {
+            const razorpayOrder = await razorpay.orders.create({
+                amount: user.totalCartAmount * 100, 
+                currency: 'INR', 
+                receipt: `${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}${Date.now()}`, // Provide a unique receipt ID
+            });
 
-        await order.save();
+            order.razorpayOrderId = razorpayOrder.id;
+
+            return res.render("user/razorpay", {                
+                order: razorpayOrder,
+                key_id: process.env.RAZORPAY_ID_KEY,
+                user: user
+            });
+        }
+
+        // Stock Update
+        for (const item of user.cart) {
+            const foundProduct = await Product.findById(item.product._id);
+            foundProduct.quantity -= item.quantity;
+            await foundProduct.save();
+        }
 
         user.totalCartAmount = 0;
         user.cart = [];
@@ -269,6 +294,61 @@ const placeOrder = async (req, res) => {
     }
 };
 
+const saveRzpOrder = async (req, res) => {
+    try {
+        const { transactionId, orderId, signature } = req.body;
+
+        const amount = parseInt(req.body.amount / 100);
+        const currentUser = await User.findById(req.session.user_id).populate('cart.product');
+
+        const deliveryAddress = await Address.findOne({ userId: req.session.user_id });
+
+        if (transactionId && orderId && signature) {
+            const orderedProducts = currentUser.cart.map((item) => {
+                return {
+                    product: item.product,
+                    quantity: item.quantity,
+                    total: item.total,
+                }
+            });
+
+            // Include orderId from the Razorpay response
+            let newOrder = new Order({
+                user: req.session.user_id,
+                products: orderedProducts,
+                totalAmount: amount,
+                paymentMethod: 'Razorpay',
+                deliveryAddress: deliveryAddress,
+                orderId: orderId, 
+            });
+
+            await newOrder.save();
+
+            // Stock Update
+            for (const cartItem of currentUser.cart) {
+                const productToUpdate = await Product.findById(cartItem.product._id);
+                productToUpdate.quantity -= cartItem.quantity;
+                await productToUpdate.save();
+            }
+
+            currentUser.cart = [];
+            currentUser.totalCartAmount = 0;
+
+            await currentUser.save();
+
+            return res.status(200).json({
+                message: "order placed successfully",
+            });
+        }
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).json({
+            message: "Internal server error",
+        });
+    }
+};
+
+
 module.exports = {
     loadCart,
     addToCart,
@@ -279,5 +359,6 @@ module.exports = {
     editAddressCO,
     loadAddAddressCO,
     addAddressCO,
-    placeOrder
+    placeOrder,
+    saveRzpOrder
 };

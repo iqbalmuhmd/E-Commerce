@@ -17,6 +17,14 @@ const user = mongoose.Schema({
         type: String,
         default: "",
       },
+      wishlist: [
+        {
+            product: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Product',
+            },
+        }
+    ],
       cart: [
         {
             product: {

@@ -1,0 +1,82 @@
+<%- include('../partials/user/header') %>
+
+<!-- Wishlist Section Begin -->
+<section class="shopping-cart spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="shopping__cart__table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Move to Cart</th>
+                                <th>Remove</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if(userData.wishlist.length > 0) { %>
+                                <% for(let i = 0; i < userData.wishlist.length; i++) { %>
+                                    <tr>
+                                        <td class="product__cart__item">
+                                            <div class="product__cart__item__pic">
+                                                <img src="<%= userData.wishlist[i].product.images[0] %>" alt="" style="width: 90px; height: 90px;">
+                                            </div>
+                                            <div class="product__cart__item__text">
+                                                <h6><%= userData.wishlist[i].product.productName %></h6>
+                                                <h5>₹ <%= userData.wishlist[i].product.price %></h5>
+                                            </div>
+                                        </td>
+                                        <td class="move-to-cart">
+                                            <% const isInCart = userData && userData.cart ? userData.cart.some(cartItem => cartItem.product.equals(userData.wishlist[i].product._id)) : false; %>
+                                            <% const isOutOfStock = userData.wishlist[i].product.quantity === 0; %>
+                                            
+                                            <% if (isInCart) { %>
+                                                <a href="/cart" class="move-to-cart-button">
+                                                    <div style="color: #333; font-weight: bold;">
+                                                        -> Go To Cart
+                                                    </div>
+                                                </a>
+                                            <% } else if (isOutOfStock) { %>
+                                                <a class="move-to-cart-button">
+                                                    <div style="color: red; font-weight: bold;">
+                                                        Out of Stock
+                                                    </div>
+                                                </a>
+                                            <% } else { %>
+                                                <a href="/add-to-cart?wishlistId=<%= userData.wishlist[i].product._id %>" class="move-to-cart-button">
+                                                    <div style="color: #333; font-weight: bold;">
+                                                        + Add to Cart
+                                                    </div>
+                                                </a>
+                                            <% } %>
+                                        </td>                                                                           
+                                        <td class="cart__close">
+                                            <a href="/delete-wishlist?wishlistId=<%= userData.wishlist[i]._id %>" class="delete-button">
+                                                <span data-product-id="<%= userData.wishlist[i].product._id %>">×</span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <% } %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="3" style="color: red; text-align: center;">Your wishlist is empty.</td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-6">
+                        <div class="continue__btn">
+                            <a href="/shop">Continue Shopping</a>
+                        </div>
+                    </div>
+                </div>
+            </div>            
+        </div>
+    </div>
+</section>
+<!-- Wishlist Section End -->
+
+<%- include('../partials/user/footer') %>

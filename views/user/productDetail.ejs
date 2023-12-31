@@ -68,9 +68,15 @@
                                 </div>
                             <% }  %>
                         <% } %>                        
-                            <div class="product__details__btns__option">
-                                <a href="#"><i class="fa fa-heart"></i> add to wishlist</a>
-                            </div>
+                        <div class="product__details__btns__option">
+                            <% const isInWishlist = user && user.wishlist ? user.wishlist.some(wishlistItem => wishlistItem.product.equals(product._id)) : false; %>
+                        
+                            <% if (isInWishlist) { %>
+                                <a href="/delete-wishlist?wishlistId=<%= product._id %>"><i class="fa fa-heart"></i> remove from wishlist</a>
+                            <% } else { %>
+                                <a href="/addToWishlist?id=<%= product._id %>"><i class="fa fa-heart"></i> add to wishlist</a>
+                            <% } %>
+                        </div>                        
                             
                         </div>
                     </div>
