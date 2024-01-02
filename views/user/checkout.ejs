@@ -2,17 +2,15 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/5.3.45/css/materialdesignicons.css" integrity="sha256-NAxhqDvtY0l4xn+YVa6WjAcmd94NNfttjNsDmNatFVc=" crossorigin="anonymous" />
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
 <div class="container" style="padding: 5rem 0rem;">
-
     <div class="row">
         <div class="col-xl-8">
-
             <div class="card">
                 <div class="card-body">
-                    <form method="post" action="/order-product">
+                    <form method="post" action="/order-product" id="placeOrderForm">
                         <ol class="activity-checkout mb-0 px-4 mt-3">
-
                             <!-- Shipping Info Section -->
                             <li class="checkout-item">
                                 <div class="avatar checkout-icon p-1">
@@ -42,7 +40,7 @@
                                                                 <div class="edit-btn bg-light rounded">
                                                                     <a href="/edit-address-co?id=<%= userAddress[i]._id %>" class="btn btn-dark" data-bs-toggle="tooltip" data-placement="top">
                                                                         <i class="bx bx-pencil font-size-16"></i>
-                                                                    </a>                                                                
+                                                                    </a>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -55,9 +53,9 @@
                                                             <a href="/add-address-co" class="btn btn-secondary btn-sm float-end">Add Address</a>
                                                         </div>
                                                     </div>
-                                                <% } %>                                                
+                                                <% } %>
                                             </div>
-                                        </div>                                                                            
+                                        </div>
                                     </div>
                                 </div>
                             </li>
@@ -77,7 +75,7 @@
                                     <div>
                                         <% if(user.totalCartAmount>0){ %>
                                         <h5 class="font-size-14 mb-3">Payment method :</h5>
-                                        <div class="row">                                                                                    
+                                        <div class="row">
                                             <div class="col-lg-3 col-sm-6">
                                                 <div>
                                                     <label class="card-radio-label">
@@ -187,3 +185,37 @@
 </div>
 
 <%- include('../partials/user/footer') %>
+
+<script>
+    const button = document.getElementById("placeOrderForm")
+    button.addEventListener('submit', placeOrder)
+
+    function placeOrder(event) {
+        event.preventDefault();
+
+        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+
+        if (paymentMethod === 'Razorpay') {
+            button.submit();
+        } else {
+            Swal.fire({
+                title: "Confirm Order",
+                text: "Are you sure you want to place the order?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, place the order!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: "Order Placed!",
+                        text: "Your order has been successfully placed.",
+                        icon: "success"
+                    });
+                    button.submit();
+                }
+            });
+        }
+    }
+</script>

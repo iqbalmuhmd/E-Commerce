@@ -1,15 +1,39 @@
 const Product = require('../../model/productModel');
 const User = require('../../model/userModel')
+const Category = require('../../model/categoryModel')
 
-const loadShop = async(req,res) =>{
+const loadShop = async (req, res) => {
     try {
-        const products = await Product.find({blocked: false});
-        const user = await User.findById(req.session.user_id);
-        res.render('user/shop',{ products, user })
+      const { query, category } = req.query;
+      let queryFilters = {};
+  
+      if (query) {
+        queryFilters.name = { $regex: `\\b${query}\\b`, $options: 'i' };
+      }
+  
+      if (category) {
+        queryFilters.category = category;
+      }
+  
+      const products = await Product.find(queryFilters).populate('category');
+      const categories = await Category.find();
+  
+      res.render('user/shop', {        
+        products,
+        user: req.session.user_id, 
+        searchQuery: query,
+        selectedCategory: category,
+        categories,
+      });
+      console.log('Search Query:', query);
+console.log('Query Filters:', queryFilters);
+
     } catch (error) {
-        console.log(error.message);
+      console.log(error.message);
+      res.render('error/internalError', { error });
     }
-}
+  };
+  
 
 const loadproductDetail = async(req,res) =>{
     try {
@@ -137,11 +161,23 @@ const deleteWishlist = async (req, res) => {
     }
 };
 
+const loadWallet = async(req, res) => {
+    try {
+        const user = await User.findById(req.session.user_id)
+        user.wallet.transactions.sort((a, b) => b.timestamp - a.timestamp);
+        
+        res.render('user/wallet', {user})
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
 module.exports = {
     loadShop,
     loadproductDetail,
     loadWishlist,
     addToWishlist,
     addToCartWL,
-    deleteWishlist
+    deleteWishlist,
+    loadWallet
 }

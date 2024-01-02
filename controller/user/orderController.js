@@ -39,33 +39,59 @@ const loadOrdersHistory = async (req, res) => {
 const cancelProduct = async (req, res) => {
     try {
         const orderId = req.body.orderId;
-        console.log(orderId);
         const reason = `Main Reason: ${req.body.cancelReason}, Optional Reason: ${req.body.cancelComment}`;
-        const cancel = await Order.findByIdAndUpdate(orderId, { $set: { isCancelled: true, orderCancelReason: reason, status: 'Cancelled' }});
+        const cancel = await Order.findByIdAndUpdate(orderId, {
+            $set: {
+                isCancelled: true,
+                orderCancelReason: reason,
+                status: 'Cancelled'
+            }
+        });
 
         cancel.products.forEach(async (pro) => {
-            const proUpdateQuantity = await Product.findById(pro.product)
-            proUpdateQuantity.quantity += pro.quantity
-            proUpdateQuantity.save()
-        })
+            const proUpdateQuantity = await Product.findById(pro.product);
+            proUpdateQuantity.quantity += pro.quantity;
+            proUpdateQuantity.save();
+        });
+
+        if (cancel.paymentMethod === 'Razorpay' || cancel.paymentMethod === 'wallet') {
+            const user = await User.findById(req.session.user_id);
+
+            const walletTransaction = {
+                amount: cancel.totalAmount,
+                description: `Refund for Order #${cancel.orderId}`,
+                type: 'Credit',
+            };
+
+            // Update user's wallet balance and add the transaction
+            user.wallet.balance += cancel.totalAmount;
+            user.wallet.transactions.push(walletTransaction);
+
+            await user.save();
+        }
 
         return res.redirect('/orders');
     } catch (error) {
-        console.log(error.message);       
+        console.log(error.message);
     }
 };
 
-const returnProduct = async(req,res) =>{
+const returnProduct = async (req, res) => {
     try {
-        const orderId = req.body.orderId
-        const returnPro = await Order.findByIdAndUpdate(orderId, {$set: { isReturn: true }})
-               
-        return res.redirect('/orders')
+        const orderId = req.body.orderId;
+        const returnPro = await Order.findByIdAndUpdate(orderId, { $set: { isReturn: true } });
 
+        returnPro.products.forEach(async (pro) => {
+            const proUpdateQuantity = await Product.findById(pro.product);
+            proUpdateQuantity.quantity += pro.quantity;
+            proUpdateQuantity.save();
+        });
+
+        return res.redirect('/orders');
     } catch (error) {
         console.log(error.message);
     }
-}
+};
 
 module.exports = {
     loadOrderSuccess,

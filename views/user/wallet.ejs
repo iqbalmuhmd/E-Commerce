@@ -1,0 +1,50 @@
+<%- include('../partials/user/header') %>
+
+<section class="bg0 p-t-100 p-b-120 mainSec">
+  <div class="container">
+    <div class="form-group">
+      <div class="p-4 border m-5">
+        <span class="d-block text-primary h5 text-uppercase">My Wallet</span>
+        <span class="d-block h6 text-uppercase">
+          Balance: <strong>₹<%= user.wallet.balance.toFixed(2) %></strong>
+        </span>
+        <span class="d-block text-primary mt-4 text-uppercase">Transaction History</span>
+
+        <% if (!user.wallet.transactions.length) { %>
+        <p class="mb-0">No data found.</p>
+        <% } else { %>
+        <div class="table-responsive mt-3">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Date & Time</th>
+                <th>Description</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% user.wallet.transactions.forEach((transaction)=> { %>
+              <tr>
+                <td><% const transactionDate = new Date(transaction.timestamp) %>
+                  <%= transactionDate.toLocaleString() %>
+                </td>
+                <td><%= transaction.description %></td>
+                <td>
+                  <% if (transaction.type === 'Credit') { %>
+                  <span class="text-success">+ ₹<%= transaction.amount %></span>
+                  <% } else { %>
+                  <span class="text-danger">- ₹<%= transaction.amount %></span>
+                  <% } %>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/user/footer') %>

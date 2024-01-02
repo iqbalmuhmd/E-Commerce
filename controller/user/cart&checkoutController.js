@@ -19,34 +19,22 @@ const addToCart = async (req, res) => {
     try {
         const productId = req.query.id;
         const productData = await Product.findById(productId);
-
-        const obj = {
-            product: productData,
-            quantity: 1,
-            total: productData.price
-        };
-
+        const cartItem = { product: productData, quantity: 1, total: productData.price };
         const userData = await User.findById(req.session.user_id);
-
         const totalCartAmt = userData.totalCartAmount + productData.price;
 
         await User.updateOne({ _id: req.session.user_id }, { $set: { totalCartAmount: totalCartAmt } });
 
-        userData.cart.push(obj);
+        userData.cart.push(cartItem);
         await userData.save();
-       
-        const referer = req.get('Referer');
-let redirectUrl;
 
-if (referer && referer.includes('/productDetail')) {
-    redirectUrl = `/productDetail?id=${productData._id}`;
-} else if (referer && referer.includes('/shop')) {
-    redirectUrl = '/shop';
-} else if (referer && referer.includes('/wishlist')) {
-    redirectUrl = '/wishlist'; 
-} else {
-    redirectUrl = '/home';
-}
+        const referer = req.get('Referer');
+        let redirectUrl;
+
+        if (referer && referer.includes('/productDetail')) redirectUrl = `/productDetail?id=${productData._id}`;
+        else if (referer && referer.includes('/shop')) redirectUrl = '/shop';
+        else if (referer && referer.includes('/wishlist')) redirectUrl = '/wishlist';
+        else redirectUrl = '/home';
 
         res.redirect(redirectUrl);
     } catch (error) {
@@ -275,7 +263,21 @@ const placeOrder = async (req, res) => {
                 key_id: process.env.RAZORPAY_ID_KEY,
                 user: user
             });
-        }
+        }else {
+            if (user.wallet.balance < user.totalCartAmount) {
+                const errorMessage = "Insufficient wallet balance";
+                return res.redirect(`/checkout?error=${encodeURIComponent(errorMessage)}`);
+            } else {
+                await order.save()
+                user.wallet.balance -= user.totalCartAmount;
+                const transactionData = {
+                    amount: user.totalCartAmount,
+                    description: 'Order placed.',
+                    type: 'Debit',
+                };
+                user.wallet.transactions.push(transactionData);
+            }
+        } 
 
         // Stock Update
         for (const item of user.cart) {

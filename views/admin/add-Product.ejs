@@ -78,20 +78,20 @@
             <div class="form-group">
               <label>Image</label>
               <div class="input-group col-sx-12">
-                <input
-                  type="file"
-                  class="form-control"
-                  id="basic-default-name images"
-                  name="images"
-                  data-target-index="1"
-                  accept="image/*"
-                  multiple
-                  onchange="previewImages(this)"
-                />
+                  <input
+                      type="file"
+                      class="form-control"
+                      id="basic-default-name images"
+                      name="images"
+                      data-target-index="1"
+                      accept="image/*"
+                      multiple
+                      onchange="previewImages(this)"
+                  />
               </div>
               <!-- Preview container for selected images -->
               <div id="imagePreviewContainer" class="mt-3"></div>
-            </div>
+          </div>
 
             <button type="submit" class="btn btn-primary mr-2">Submit</button>
             <a href="/admin/products" class="btn btn-light">Cancel</a>
@@ -123,5 +123,43 @@
         reader.readAsDataURL(input.files[i]);
       }
     }
+  }
+</script>
+
+<script>
+  function previewImages(input) {
+      var previewContainer = document.getElementById("imagePreviewContainer");
+      previewContainer.innerHTML = "";
+
+      if (input.files) {
+          var filesAmount = input.files.length;
+
+          for (let i = 0; i < filesAmount; i++) {
+              var reader = new FileReader();
+
+              reader.onload = function (event) {
+                  var deleteButton = document.createElement("button");
+                  deleteButton.innerHTML = "x";
+                  deleteButton.onclick = function () {
+                      // Remove the preview and the associated file input
+                      previewContainer.removeChild(previewContainer.childNodes[i]);
+                      input.files.splice(i, 1);
+                  };
+
+                  var img = document.createElement("img");
+                  img.src = event.target.result;
+                  img.width = 100; // Set your desired width
+                  img.height = 100; // Set your desired height
+
+                  var imgContainer = document.createElement("div");
+                  imgContainer.appendChild(img);
+                  imgContainer.appendChild(deleteButton);
+
+                  previewContainer.appendChild(imgContainer);
+              };
+
+              reader.readAsDataURL(input.files[i]);
+          }
+      }
   }
 </script>

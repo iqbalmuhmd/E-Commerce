@@ -117,5 +117,7 @@ userRouter.get('/addToWishlist', userAuth.isLogin, mainController.addToWishlist)
 userRouter.get('/add-to-cart', userAuth.isLogin, mainController.addToCartWL);
 userRouter.get('/delete-wishlist', userAuth.isLogin, mainController.deleteWishlist);
 
+userRouter.get('/wallet', mainController.loadWallet)
+
 
 module.exports = userRouter
