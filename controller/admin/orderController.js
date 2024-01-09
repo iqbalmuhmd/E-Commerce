@@ -1,4 +1,6 @@
 const Order = require('../../model/orderModel');
+const User = require('../../model/userModel');
+const Coupon = require('../../model/couponModel');
 
 const loadOrders = async (req, res) => {
     try {
@@ -16,6 +18,24 @@ const updateActionOrder = async (req, res) => {
     try {
         const orderId = req.query.id;
         const action = req.query.status;
+
+        const order = await Order.findById(orderId);
+        const userData = await User.findById(order.user);
+
+        if (req.query.status === "Delivered") {
+            const foundCoupon = await Coupon.findOne({
+                isActive: true, minimumPurchaseAmount: { $lte: order.totalAmount }
+            }).sort({ minimumPurchaseAmount: -1 });
+
+            if (foundCoupon) {
+                const couponExists = userData.earnedCoupons.some((coupon) => coupon.coupon.equals(foundCoupon._id));
+                if (!couponExists) {
+                    userData.earnedCoupons.push({ coupon: foundCoupon._id });
+                }
+            }
+
+            await userData.save();
+        }
 
         await Order.findByIdAndUpdate(orderId, { $set: { status: action } });
 

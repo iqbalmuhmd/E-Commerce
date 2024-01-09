@@ -25,6 +25,7 @@ const productController = require('../controller/admin/productsController')
 const categoryController = require('../controller/admin/categoryController')
 const imageUpload = require('../middleware/imageUpload')
 const orderController = require('../controller/admin/orderController')
+const couponController = require('../controller/admin/couponController')
 
 
 
@@ -67,7 +68,11 @@ adminRouter.get('/orders', adminAuth.adminLogin, orderController.loadOrders)
 adminRouter.get('/order/action-update', adminAuth.adminLogin, orderController.updateActionOrder);
 adminRouter.get('/order/return-action-update', orderController.updateActionReturn)
 
-
+// Coupon
+adminRouter.get('/coupon', adminAuth.adminLogin, couponController.loadCoupon);
+adminRouter.get('/new-coupon', adminAuth.adminLogin, couponController.getAddNewCoupon);
+adminRouter.post('/new-coupon', adminAuth.adminLogin, couponController.addNewCoupon);
+adminRouter.patch('/coupons/action/:id', adminAuth.adminLogin, couponController.couponAction);
 
 
 module.exports = adminRouter

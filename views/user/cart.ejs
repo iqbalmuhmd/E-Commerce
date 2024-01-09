@@ -41,7 +41,7 @@
                                         </td>
                                         <td id="totalPrice_<%= userData.cart[i].product._id %>" class="cart__price">₹ <%= userData.cart[i].total %></td>
                                         <td class="cart__close">
-                                            <a href="/delete-cart?cartId=<%= userData.cart[i]._id %>" class="delete-button">
+                                            <a href="#" onclick="confirmDelete('<%= userData.cart[i]._id %>', '<%= userData.cart[i].product._id %>')" class="delete-button">
                                                 <span data-product-id="<%= userData.cart[i].product._id %>">×</span>
                                             </a>
                                         </td>
@@ -115,3 +115,13 @@
         });
     }
 </script>
+
+<script>
+    function confirmDelete(cartId, productId) {
+        var confirmation = confirm("Are you sure you want to delete this item?");
+        
+        if (confirmation) {           
+            window.location.href = "/delete-cart?cartId=" + cartId;
+        } 
+    }
+    </script>

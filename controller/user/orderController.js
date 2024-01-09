@@ -86,7 +86,21 @@ const returnProduct = async (req, res) => {
             proUpdateQuantity.quantity += pro.quantity;
             proUpdateQuantity.save();
         });
+        
+            const user = await User.findById(req.session.user_id);
 
+            const walletTransaction = {
+                amount: returnPro.totalAmount,
+                description: `Refund for Order #${returnPro.orderId}`,
+                type: 'Credit',
+            };
+
+            // Update user's wallet balance and add the transaction
+            user.wallet.balance += returnPro.totalAmount;
+            user.wallet.transactions.push(walletTransaction);
+
+            await user.save();
+                
         return res.redirect('/orders');
     } catch (error) {
         console.log(error.message);

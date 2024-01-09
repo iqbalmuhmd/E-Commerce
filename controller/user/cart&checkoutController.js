@@ -3,6 +3,7 @@ const User = require('../../model/userModel');
 const Address = require('../../model/addressModel');
 const Product = require('../../model/productModel');
 const Order = require('../../model/orderModel');
+const Coupon = require('../../model/couponModel')
 const razorpay = require('../../controller/utils/razorpayConfig')
 
 const loadCart = async (req, res) => {
@@ -124,7 +125,10 @@ const loadCheckOut = async (req, res) => {
         const userId = await User.findById(req.session.user_id);
         const user = await User.findById(userId).populate('cart.product');
         const userAddress = await Address.find({ userId: req.session.user_id });
-        res.render('user/checkout', { user, userAddress });
+        let couponError = ''
+        let discount = 0
+        let currentCoupon = "0"
+        res.render('user/checkout', { user, userAddress, couponError, discount,currentCoupon });
     } catch (error) {
         console.log(error.message);
     }
@@ -227,11 +231,12 @@ const placeOrder = async (req, res) => {
         });
 
         const orderId = Math.floor(100000 + Math.random() * 900000);
+        const discount = req.query.discount
 
         const order = new Order({
             user: userId,
             products: products,
-            totalAmount: user.totalCartAmount,
+            totalAmount: user.totalCartAmount - discount,
             paymentMethod: selectedPaymentMethod,
             deliveryAddress: {
                 _id: selectedAddress._id,
@@ -250,15 +255,16 @@ const placeOrder = async (req, res) => {
         if(selectedPaymentMethod === 'COD'){
             await order.save();
         } else if(selectedPaymentMethod === 'Razorpay') {
+            const totalAmnt = user.totalCartAmount * 100
             const razorpayOrder = await razorpay.orders.create({
-                amount: user.totalCartAmount * 100, 
+                amount: user.totalCartAmount * 100 - discount * 100, 
                 currency: 'INR', 
                 receipt: `${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}${Date.now()}`, // Provide a unique receipt ID
             });
 
             order.razorpayOrderId = razorpayOrder.id;
 
-            return res.render("user/razorpay", {                
+            return res.render("user/razorpay", {                               
                 order: razorpayOrder,
                 key_id: process.env.RAZORPAY_ID_KEY,
                 user: user
@@ -288,9 +294,16 @@ const placeOrder = async (req, res) => {
 
         user.totalCartAmount = 0;
         user.cart = [];
-        await user.save();
 
-        res.redirect('/order-success');
+        const currentUsedCoupon = await user.earnedCoupons.find((coupon) => coupon.coupon.equals(req.body.currentCoupon));        
+            if (currentUsedCoupon) {
+            currentUsedCoupon.isUsed = true;
+            await Coupon.findByIdAndUpdate(req.body.currentCoupon, { $inc: { usedCount: 1 } });
+        }
+            await user.save();
+
+             res.redirect('/order-success');
+
     } catch (error) {
         console.error(error.message);
     }
@@ -350,6 +363,91 @@ const saveRzpOrder = async (req, res) => {
     }
 };
 
+const getCoupons = async (req, res) => {
+    try {
+        const user = await User.findById(req.session.user_id)
+        const currentUser = await User.findById(req.session.user_id).populate('earnedCoupons.coupon');
+        const allCoupons = await Coupon.find({ isActive: true });
+        const earnedCoupons = currentUser.earnedCoupons;
+
+        // Convert the list of earned coupon IDs to an array
+        const earnedCouponIds = earnedCoupons.map((coupon) => coupon.coupon._id.toString());
+        // Filter out earned coupons from the active coupons list
+        const remainingCoupons = allCoupons.filter((coupon) => !earnedCouponIds.includes(coupon._id.toString()));
+
+        res.render("user/coupon", {            
+            user: user,
+            currentUser,
+            allCoupons: remainingCoupons,
+            earnedCoupons,
+        });
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+
+const applyCoupon = async(req, res) => {
+    try {
+        const user1 = await User.findById(req.session.user_id)
+        const user = await User.findById(req.session.user_id).populate('earnedCoupons.coupon');
+        await user.populate('cart.product');
+        await user.populate('cart.product.category');
+        const cartProducts = user.cart;
+        const userAddress = await Address.find({ userId: req.session.user_id });        
+        const currentCoupon = await Coupon.findOne({ code: req.body.coupon });
+        const grandTotal = cartProducts.reduce((total, element) => {
+            return total + element.total;
+        }, 0);
+
+        let couponError = "";
+        let discount = 0;
+        const errorMessage = req.query.error;
+
+        if (currentCoupon) {
+            const foundCoupon = user.earnedCoupons.find(coupon => coupon.coupon._id.equals(currentCoupon._id));
+            if (foundCoupon) {
+                if (foundCoupon.coupon.isActive) {
+                    if (!foundCoupon.isUsed) {
+                        if (foundCoupon.coupon.discountType === 'fixedAmount') {   
+                            if (foundCoupon.coupon.discountAmount > grandTotal){
+                                couponError = "Your total is less than coupon amount."
+                            } else {
+                                discount = foundCoupon.coupon.discountAmount;
+                            }                       
+                        } else {
+                            discount = (foundCoupon.coupon.discountAmount / 100) * grandTotal;
+                        }
+                    } else {
+                        couponError = foundCoupon.isUsed ? "Coupon already used." : "Coupon is inactive.";
+                    }
+                } else {
+                    couponError = foundCoupon.isUsed ? "Coupon already used." : "Coupon is inactive.";
+                }
+            } else {
+                couponError = "Invalid coupon code.";
+            }
+        } else {
+            couponError = "Invalid coupon code.";
+        }
+
+        res.render("user/checkout", {             
+            user: user1,
+            user,
+            cartProducts,
+            userAddress,            
+            discount,
+            grandTotal,
+            currentCoupon: couponError ? '' : currentCoupon._id,
+            couponError,
+            errorMessage,
+            error: "",
+        });
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
 
 module.exports = {
     loadCart,
@@ -362,5 +460,7 @@ module.exports = {
     loadAddAddressCO,
     addAddressCO,
     placeOrder,
-    saveRzpOrder
+    saveRzpOrder,
+    getCoupons,
+    applyCoupon
 };

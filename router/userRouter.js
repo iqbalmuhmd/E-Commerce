@@ -117,7 +117,12 @@ userRouter.get('/addToWishlist', userAuth.isLogin, mainController.addToWishlist)
 userRouter.get('/add-to-cart', userAuth.isLogin, mainController.addToCartWL);
 userRouter.get('/delete-wishlist', userAuth.isLogin, mainController.deleteWishlist);
 
-userRouter.get('/wallet', mainController.loadWallet)
+//Wallet
+userRouter.get('/wallet', userAuth.isLogin, mainController.loadWallet)
+
+//Coupon
+userRouter.get('/coupon', userAuth.isLogin, checkoutController.getCoupons)
+userRouter.post('/apply-coupon', userAuth.isLogin, checkoutController.applyCoupon)
 
 
 module.exports = userRouter
