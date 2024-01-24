@@ -101,7 +101,7 @@ const returnProduct = async (req, res) => {
 
             await user.save();
                 
-        return res.redirect('/orders');
+        return res.redirect(`order-history`);
     } catch (error) {
         console.log(error.message);
     }
@@ -112,5 +112,5 @@ module.exports = {
     loadOrders,
     loadOrdersHistory,
     cancelProduct,
-    returnProduct
+    returnProduct,    
 };

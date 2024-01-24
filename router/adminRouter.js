@@ -18,6 +18,7 @@ adminRouter.use(function (req, res, next) {
 
 
 const adminAuth = require('../middleware/adminAuth')
+const mainController = require('../controller/admin/mainController')
 const dashboardController = require('../controller/admin/dashboardController')
 const adminController = require('../controller/admin/login&signupController')
 const userController = require('../controller/admin/userController')
@@ -26,6 +27,7 @@ const categoryController = require('../controller/admin/categoryController')
 const imageUpload = require('../middleware/imageUpload')
 const orderController = require('../controller/admin/orderController')
 const couponController = require('../controller/admin/couponController')
+const referralController = require('../controller/admin/referralController')
 
 
 
@@ -36,7 +38,7 @@ adminRouter.post('/login', adminAuth.adminLogout, adminController.verifyLogin);
 
 
 // Dashboard
-adminRouter.get('/dashboard', adminAuth.adminLogin, dashboardController.loadDashboard)
+adminRouter.get('/dashboard', adminAuth.adminLogin, mainController.loadDashboard)
 
 
 // Users
@@ -73,6 +75,14 @@ adminRouter.get('/coupon', adminAuth.adminLogin, couponController.loadCoupon);
 adminRouter.get('/new-coupon', adminAuth.adminLogin, couponController.getAddNewCoupon);
 adminRouter.post('/new-coupon', adminAuth.adminLogin, couponController.addNewCoupon);
 adminRouter.patch('/coupons/action/:id', adminAuth.adminLogin, couponController.couponAction);
+
+//SalesReport
+adminRouter.get('/sales-report', mainController.loadSalesReport)
+adminRouter.post('/sales-report', mainController.loadSalesReport)
+
+//Referral
+adminRouter.get('/referral', adminAuth.adminLogin, referralController.loadReferral)
+adminRouter.post('/addReferral', adminAuth.adminLogin, referralController.addReferral)
 
 
 module.exports = adminRouter

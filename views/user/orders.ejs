@@ -457,4 +457,56 @@
     </div>
 </div>
 
+
+
 <%- include('../partials/user/footer') %>
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- Font Awesome JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" integrity="sha384-Q6qt6qZCcyAq1WyG0B8voXN1oWoRq9PWBqMlUAqFt8CH4AGilr5S6ENXdeFUZbx" crossorigin="anonymous"></script>
+
+<script>
+  // Function to set the product ID, initial star rating, and initial review when the modal is shown
+  $('#reviewModal').on('show.bs.modal', function(event) {
+    var button = $(event.relatedTarget); // Button that triggered the modal
+    var productId = button.data('product-id'); // Extract info from data-* attributes
+    var initialRating = button.data('initial-rating'); // Extract the initial rating
+    var initialReview = button.data('initial-review'); // Extract the initial review
+    $('#productId').val(productId); // Set the product ID in the hidden input
+
+    // Set the initial star rating dynamically
+    setInitialRating(initialRating);
+
+    // Set the initial review content
+    $('#review').val(initialReview);
+  });
+
+  // Function to set the initial star rating
+  function setInitialRating(initialRating) {
+    var ratingDiv = $('#productRating');
+    ratingDiv.empty(); // Clear existing stars
+
+    // Create stars based on the initial rating
+    for (var i = 5; i >= 1; i--) {
+      var star = $('<input type="radio" id="star' + i + '" name="rating" value="' + i + '" /><label for="star' + i + '" title="' + i + ' stars"></label>');
+      if (i <= initialRating) {
+        star.prop('checked', true); // Check the stars up to the initial rating
+      }
+      ratingDiv.append(star);
+    }
+  }
+</script>
+
+<script>
+    function validateFeild(input) {
+      // Remove spaces at the beginning
+      input.value = input.value.replace(/^\s+/g, '');
+  
+      // Allow only letters, commas, and full stops
+      input.value = input.value.replace(/[^A-Za-z0-9,.\s]/g, '');
+    }
+  </script>

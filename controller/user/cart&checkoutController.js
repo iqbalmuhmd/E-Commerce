@@ -20,9 +20,15 @@ const addToCart = async (req, res) => {
     try {
         const productId = req.query.id;
         const productData = await Product.findById(productId);
-        const cartItem = { product: productData, quantity: 1, total: productData.price };
+        let total = 0
+        if(productData.offerPrice > 0){
+            total = productData.offerPrice
+        } else{
+            total = productData.price
+        }
+        const cartItem = { product: productData, quantity: 1, total: total };
         const userData = await User.findById(req.session.user_id);
-        const totalCartAmt = userData.totalCartAmount + productData.price;
+        const totalCartAmt = userData.totalCartAmount + total
 
         await User.updateOne({ _id: req.session.user_id }, { $set: { totalCartAmount: totalCartAmt } });
 
@@ -45,61 +51,73 @@ const addToCart = async (req, res) => {
 
 const updateCartItem = async (req, res) => {
     try {
-        const currentUser = await User.findById(req.session.user_id);
-        const cartItem = currentUser.cart.find(item => item.product.equals(new mongoose.Types.ObjectId(req.params.id)));
-
-        if (cartItem) {
-            const product = await Product.findById(cartItem.product);
-
-            let grandTotal;
-
-            if (req.body.type === 'decrement') {
-                if (cartItem.quantity !== 1) {
-                    cartItem.quantity--;
-                }
-            } else if (req.body.type === 'increment') {
-                if (cartItem.quantity + 1 <= product.quantity) {
-                    cartItem.quantity++;
-                } else {
-                    return res.status(200).json({ message: 'Stock limit exceeded' });
-                }
-            }
-
-            let insufficientStock = false;
-            if (product.quantity < cartItem.quantity) {
-                insufficientStock = true;
-            }
-
-            await currentUser.populate('cart.product');
-
-            for (const item of currentUser.cart) {
-                const currentProduct = await Product.findById(item.product);
-                item.total = item.quantity * currentProduct.price;
-            }
-
-            grandTotal = currentUser.cart.reduce((total, element) => {
-                return total + element.quantity * element.product.price;
-            }, 0);
-
-            currentUser.totalCartAmount = grandTotal;
-
-            await currentUser.save();
-
-            return res.status(200).json({
-                message: 'Success',
-                quantity: cartItem.quantity,
-                totalPrice: product.price * cartItem.quantity,
-                grandTotal,
-                insufficientStock
-            });
-        } else {
-            return res.status(404).json({ message: "Product not found in the user's cart." });
+      const currentUser = await User.findById(req.session.user_id);
+      const cartItem = currentUser.cart.find(item => item.product.equals(new mongoose.Types.ObjectId(req.params.id)));
+  
+      if (cartItem) {
+        const product = await Product.findById(cartItem.product);
+  
+        if (req.body.type === 'decrement') {
+          if (cartItem.quantity !== 1) {
+            cartItem.quantity--;
+          }
+        } else if (req.body.type === 'increment') {
+          if (cartItem.quantity + 1 <= product.quantity) {
+            cartItem.quantity++;
+          } else {
+            return res.status(200).json({ message: 'Stock limit exceeded' });
+          }
         }
+  
+        let insufficientStock = false;
+        if (product.quantity < cartItem.quantity) {
+          insufficientStock = true;
+        }
+  
+        await currentUser.populate('cart.product');
+  
+        for (const item of currentUser.cart) {
+          const currentProduct = await Product.findById(item.product);
+          if (currentProduct.offer > 0) {
+            item.total = item.quantity * currentProduct.offerPrice;
+          } else {
+            item.total = item.quantity * currentProduct.price;
+          }
+        }
+  
+        const grandTotal = currentUser.cart.reduce((total, element) => {
+          if (element.product.offer > 0) {
+            return total + element.quantity * element.product.offerPrice;
+          } else {
+            return total + element.quantity * element.product.price;
+          }
+        }, 0);
+  
+        currentUser.totalCartAmount = grandTotal;
+  
+        const totalPrice =
+          product.offer > 0
+            ? product.offerPrice * cartItem.quantity
+            : product.price * cartItem.quantity;
+  
+        await currentUser.save();
+  
+        return res.status(200).json({
+          message: 'Success',
+          quantity: cartItem.quantity,
+          totalPrice,
+          grandTotal,
+          stock: product.quantity,
+          insufficientStock,
+        });
+      } else {
+        return res.status(404).json({ message: "Product not found in the user's cart." });
+      }
     } catch (error) {
-        console.error(error);
-        res.render('error/internalError', { error });
+      console.error(error);
+      res.render('error/internalError', { error });
     }
-};
+};  
 
 const deleteCart = async (req, res) => {
     try {

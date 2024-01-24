@@ -43,6 +43,17 @@
                   <input type="text" name="price" class="form-control" id="exampleInputPassword4" placeholder="Price"
                     value="<%= product.price %>" required />
                 </div>
+                <div class="form-group">
+                  <label for="exampleInputPassword4">Offer</label>
+                  <input
+                    type="text"
+                    name="offer"
+                    class="form-control"
+                    id="exampleInputPassword4"
+                    placeholder="Offer in Percentage"
+                    value="<%= product.offer %>"
+                  />
+                </div>                
                 <button type="submit" class="btn btn-primary mr-2">Submit</button>
                 <a href="/admin/products" class="btn btn-light">Cancel</a>
               </form>

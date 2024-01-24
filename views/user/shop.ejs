@@ -71,8 +71,14 @@
                                     <% } else { %>
                                         <a href="/addToCart?id=<%= products[i]._id %>" class="add-cart">+ Add To Cart</a>
                                     <% } %>
-                    
-                                    <h5>₹<%= products[i].price %></h5>
+                                    
+                                    <% if(products[i].offer!==null&&products[i].offer!==0&&products[i].offerPrice>0){ %>    
+                                        <h5>
+                                            <s style="color: #fa4251; font-size: smaller">₹<%= products[i].price %></s> ₹<%= products[i].offerPrice %>
+                                          </h5>                                                                         
+                                        <%  }else{ %>
+                                            <h5>₹<%= products[i].price %></h5>
+                                    <% } %>                                    
                                 </div>
                             </div>
                         </div>

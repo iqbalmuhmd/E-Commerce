@@ -1,4 +1,5 @@
 const Category = require('../../model/categoryModel');
+const Product = require('../../model/productModel')
 
 const loadCategory = async (req, res) => {
   try {
@@ -29,7 +30,7 @@ const addCategory = async (req, res) => {
       if (check) {
         res.render('admin/add-category', { error: 'Category already exists' });
       } else {
-        const category = await Category.create({ category: categoryName });
+        const category = await Category.create({ category: categoryName, offer: req.body.offer });
 
         if (category) {
           return res.render('admin/add-category', { success: 'Category added Successfully' });
@@ -55,37 +56,47 @@ const editCategory = async (req, res) => {
 
 const postEditCategory = async (req, res) => {
   try {
-    const categoryName = req.body.categoryName.trim();
+    const catName = req.body.categoryName;
+    const catOffer = req.body.offer;
+    const id = req.body.id;
+    var offerPrice = 0;
 
-    if (categoryName === '') {
-      return res.render('admin/editCategory', { error: 'Please enter a Non-Empty Category name' });
-    } else {
-      const check = await Category.findOne({ category: { $regex: new RegExp(`^${categoryName}$`, "i") } });
+    const pp = await Product.find({ category: id });
+    console.log(`pp is : ${pp}`);
+    console.log(pp);
 
-      if (check) {
-        res.render('admin/add-category', { error: 'Category already exists' });
-      } else {
-        await Category.updateOne({ _id: req.body.id }, { $set: { category: categoryName } });
+    for (let i = 0; i < pp.length; i++) {
+      offerPrice = Math.round(
+        pp[i].price - (pp[i].price * req.body.offer) / 100
+      );
 
-        return res.redirect("/admin/category");
-      }
-    }
+      await Product.updateOne(
+        { category: id, productName: pp[i].productName },
+        { $set: { offerPrice: offerPrice, offer: catOffer } }
+      );
+    }    
+
+    await Category.updateOne(
+      { _id: id },
+      { $set: { name: catName, offer: catOffer } }
+    );
+
+    return res.redirect('/admin/category');
   } catch (error) {
     console.log(error.message);
   }
 };
 
-const deleteCategory = async(req,res) =>{
+const deleteCategory = async (req, res) => {
   try {
     const id = req.query.id;
     await Category.findByIdAndDelete({ _id: id });
 
-    res.redirect('/admin/category')
+    res.redirect('/admin/category');
   } catch (error) {
     console.log(error.message);
   }
-}
-
+};
 
 module.exports = {
   loadCategory,

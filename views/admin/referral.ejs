@@ -1,0 +1,44 @@
+<%- include('../partials/admin/header') %>
+<%- include('../partials/admin/sidePanel') %>
+
+<div class="container mt-5" style="background-color: #F5F7FF;">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h6>Please make a Referral Amount</h6>
+                </div>
+                <div class="card-body">
+                    <!-- Start of the form -->
+                    <form id="referralForm" action="/admin/addReferral" method="post">
+                        <div class="form-group">
+                            <strong>
+                                <label for="referralAmount">
+                                  Current Referral Amount: ₹ <%= admin && admin.referralAmount ? admin.referralAmount : 'N/A' %> 
+                                </label>
+                              </strong>
+                              
+                            <input type="number" class="form-control" id="referralAmount" name="referralAmount" placeholder="Referral Amount" required>
+                            <small id="referralAmountError" style="color: red;"></small>
+                        </div>
+                        <button type="button" class="btn btn-success" onclick="validateForm()">Update Amount</button>
+                    </form>
+                    <!-- End of the form -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function validateForm() {
+        var referralAmount = document.getElementById("referralAmount").value;
+
+        if (referralAmount <= 0) {
+            document.getElementById("referralAmountError").innerHTML = "Referral Amount must be greater than 0.";
+        } else {
+            document.getElementById("referralAmountError").innerHTML = ""; // Clear the error message
+            document.getElementById("referralForm").submit(); // Submit the form if validation passes
+        }
+    }
+</script>

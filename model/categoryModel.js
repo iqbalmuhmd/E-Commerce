@@ -4,6 +4,9 @@ const categorySchema = {
     category: {
         type: String,
         required: true
+    },
+    offer: {
+        type: Number
     }
 }
 

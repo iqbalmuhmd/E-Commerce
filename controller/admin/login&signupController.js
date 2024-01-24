@@ -1,11 +1,10 @@
-const User = require('../../model/userModel');
-const bcrypt = require("bcrypt");
+const Admin = require('../../model/adminModel');
 
 const loadLogin = async (req, res) => {
   try {
     res.render('admin/login');
   } catch (error) {
-    res.render("error/internalError", { error });
+    console.log(error.message);
   }
 };
 
@@ -14,26 +13,19 @@ const verifyLogin = async (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
 
-    const userData = await User.findOne({ email });
-
-    if (userData) {
-      const passwordMatch = await bcrypt.compare(password, userData.password);
-
-      if (passwordMatch) {
-        if (userData.is_admin === false) {
-          res.render("admin/login", { message: "Email and password are incorrect" });
-        } else {
-          req.session.admin = userData.id;
-          res.redirect("/admin/dashboard");
-        }
+    const validEmail = await Admin.findOne({ email });
+    
+    if (validEmail) {
+      if (password === validEmail.password) {
+        req.session.admin = validEmail._id;
+        res.redirect("/admin/dashboard");
       } else {
-        res.render("admin/login", { message: "Email and password are incorrect" });
+        res.render('admin/login', {message: 'Admin not found'})
       }
-    } else {
-      res.render("admin/login", { message: "Email and password are incorrect" });
     }
+    
   } catch (error) {
-    res.render("error/internalError", { error });
+    console.log(error.message);
   }
 };
 

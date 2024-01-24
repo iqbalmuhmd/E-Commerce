@@ -21,6 +21,15 @@
                   placeholder="Category Name"
                   value="<%= category.category %>"
                 />
+                <label for="exampleInputName1">Offer</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="exampleInputOffer"
+                  name="offer"
+                  placeholder="Offer in percentage"
+                  value="<%=category.offer%>"
+                />
                 <div class="text-center mt-2" style="font-weight: bold;">
                   <% if (typeof error !== 'undefined') { %>
                     <span class="text-danger"><%= error %></span>

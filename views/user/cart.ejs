@@ -24,8 +24,14 @@
                                                 <img src="<%= userData.cart[i].product.images[0] %>" alt="" style="width: 90px; height: 90px;">
                                             </div>
                                             <div class="product__cart__item__text">
-                                                <h6><%= userData.cart[i].product.productName %></h6>
-                                                <h5>₹ <%= userData.cart[i].product.price %></h5>
+                                                <h6><%= userData.cart[i].product.productName %></h6>                                                
+                                                <% if (userData.cart[i].product.offerPrice > 0) { %>
+                                                    <h5>
+                                                      <s style="color: #fa4251; font-size: smaller">₹<%= userData.cart[i].product.price %></s> ₹<%= userData.cart[i].product.offerPrice %>
+                                                    </h5>
+                                                  <% } else { %>
+                                                    <h5>₹<%= userData.cart[i].product.price %></h5>
+                                                  <% } %>                                                  
                                             </div>
                                         </td>
                                         <td class="quantity__item">

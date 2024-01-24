@@ -44,7 +44,13 @@
                     <div class="col-lg-8">
                         <div class="product__details__text">
                             <h4><%= product.productName %></h4>
-                            <h3>₹<%= product.price %></h3>
+                            <% if(product.offer!==null&&product.offer!==0&&product.offerPrice>0){ %>    
+                                <h3>
+                                    <s style="color: #fa4251; font-size: smaller">₹<%= product.price %></s> ₹<%= product.offerPrice %>
+                                  </h3>                                                                         
+                                <%  }else{ %>
+                                    <h3>₹<%= product.price %></h3>
+                            <% } %>
                             <p><%= product.description %></p>
                         </p>
                         <% if(product.quantity === 0) { %>
