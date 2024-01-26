@@ -17,6 +17,9 @@ const user = mongoose.Schema({
         type: String,
         default: "",
       },
+      referralCode: {
+        type: String,
+      },
       wallet: {
         balance: {
             type: Number,
@@ -85,11 +88,7 @@ const user = mongoose.Schema({
     password: {
         type: String,
         required: true
-    },
-    isAdmin: {
-        type: Boolean,
-        default: false
-    },
+    },    
     isVerified: {
         type: Boolean,
         default: false

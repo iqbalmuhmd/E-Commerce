@@ -1,4 +1,5 @@
 const User = require('../../model/userModel');
+const Admin = require('../../model/adminModel')
 const Product = require('../../model/productModel')
 const UserOTPVerification = require("../../model/userOTPVerification");
 const bcrypt = require('bcrypt');
@@ -71,9 +72,12 @@ const securePassword = async (password) => {
 
 const insertUser = async (req, res) => {
   try {
+    const referralCode = req.body.referralCode;    
     const existingEmail = await User.findOne({ email: req.body.email });
 
-    if (existingEmail) return res.render('user/register', { error: 'Email already exists!!' });
+    if (existingEmail) {
+      return res.render('user/register', { error: 'Email already exists!!' });
+    }
 
     const spassword = await securePassword(req.body.password);
     const user = new User({
@@ -83,6 +87,31 @@ const insertUser = async (req, res) => {
       password: spassword,
       isVerified: false
     });
+
+    const code = referralCode.trim();
+
+    if (code !== "") {
+      const admin = await Admin.findOne();
+      const amount = admin.referralAmount;
+      const referredUser = await User.findOne({ referralCode: code });
+
+      if (referredUser) {
+        // Add the referred amount to the wallet
+        let refNum = Math.random()*60
+        const referredAmount = Math.floor((amount * Math.round(refNum)) / 100);
+        referredUser.wallet.balance += referredAmount;
+
+        // Add the transaction to the wallet's transactions array
+        const transactionData = {
+          amount: referredAmount,
+          description: `${req.body.name} signed up using your referral code. Credited ${referredAmount} to your wallet.`,
+          type: 'Credit',
+        };
+        referredUser.wallet.transactions.push(transactionData);
+        
+        await referredUser.save();    
+      }
+    }
 
     user.save()
       .then((result) => {

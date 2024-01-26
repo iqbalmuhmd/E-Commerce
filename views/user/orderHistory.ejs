@@ -95,6 +95,13 @@
                                             </td>
                                             <td><%= product.quantity %></td>
                                             <td class="text-end"><%= product.total %></td>
+                                            <td>
+                                                <% if (order.status === "Delivered" && order.returnRequested !== "Completed" && order.isCancelled !== true) { %>
+                                                    <button type="button" class="btn btn-sm btn-outline-info mt-3" data-toggle="modal" data-target="#reviewModal" data-product-id="<%= product.product._id %>" data-initial-rating="<%= product.product %>">
+                                                      Review
+                                                    </button>
+                                                    <% } %>
+                                            </td>
                                         </tr>
                                     <% }); %>
                                 <% } else { %>
@@ -168,3 +175,77 @@
 </div>
 
 <%- include('../partials/user/footer') %>
+
+<!-- Modal -->
+<div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="reviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="reviewModalLabel">Product Review</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="/submitReview" method="post">
+          <div class="modal-body">
+  
+            <!-- Hidden input for Product ID -->
+            <input type="hidden" id="productId" name="productId" value="productId">
+  
+            <!-- Product Rating -->
+            <label for="rating">Rating:</label>
+            <div class="rating" id="productRating">
+              <!-- Initial star rating will be set dynamically -->
+            </div>
+  
+            <!-- Review Textarea -->
+            <label for="review">Review:</label>
+            <textarea class="form-control" id="review" name="review" rows="3" oninput="validateFeild(this)"></textarea>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Submit Review</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- Font Awesome JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" integrity="sha384-Q6qt6qZCcyAq1WyG0B8voXN1oWoRq9PWBqMlUAqFt8CH4AGilr5S6ENXdeFUZbx" crossorigin="anonymous"></script>
+
+<script>
+  // Function to set the product ID, initial star rating, and initial review when the modal is shown
+  $('#reviewModal').on('show.bs.modal', function(event) {
+    var button = $(event.relatedTarget); // Button that triggered the modal
+    var productId = button.data('product-id'); // Extract info from data-* attributes
+    var initialRating = button.data('initial-rating'); // Extract the initial rating
+    var initialReview = button.data('initial-review'); // Extract the initial review
+    $('#productId').val(productId); // Set the product ID in the hidden input
+
+    // Set the initial star rating dynamically
+    setInitialRating(initialRating);
+
+    // Set the initial review content
+    $('#review').val(initialReview);
+  });
+
+  // Function to set the initial star rating
+  function setInitialRating(initialRating) {
+    var ratingDiv = $('#productRating');
+    ratingDiv.empty(); // Clear existing stars
+
+    // Create stars based on the initial rating
+    for (var i = 5; i >= 1; i--) {
+      var star = $('<input type="radio" id="star' + i + '" name="rating" value="' + i + '" /><label for="star' + i + '" title="' + i + ' stars"></label>');
+      if (i <= initialRating) {
+        star.prop('checked', true); // Check the stars up to the initial rating
+      }
+      ratingDiv.append(star);
+    }
+  }
+</script>

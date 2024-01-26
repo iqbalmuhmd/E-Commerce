@@ -93,6 +93,42 @@
     </section>
     <!-- Shop Details Section End -->
 
+    <div class="container mt-5">
+        <% if(product.rating.length > 0) { %>
+          <!-- Review Section -->
+          <div class="row">
+            <div class="col-md-12">
+              <h4 class="mtext-105 cl2 p-b-10">Customer Reviews</h4>
+      
+              <% for(let i=0; i<product.rating.length; i++) { %>
+      
+              <!-- Review Card -->
+              <div class="card mt-3">
+                <div class="card-body">
+                  <!-- Star Ratings -->
+                  <div class="text-warning" style="font-size: 1.3em;">
+                    <% for(let j=0; j<5; j++) { %>
+                    <% if(product.rating[i].rate > j) { %>
+                    ★
+                    <% } else { %>
+                    ☆
+                    <% } %>
+                    <% } %>
+                  </div>
+                  
+                  <!-- Customer Name -->
+                  <span class="customer-name ml-2">Customer: <%= product.rating[i].customer.name %></span>
+      
+                  <!-- Review Text -->
+                  <p class="card-text mt-2"><%= product.rating[i].review %></p>
+                </div>
+              </div>
+              <% } %>
+            </div>
+          </div>
+        <% } %>
+      </div>
+
     <!-- Related Section Begin -->
     
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>

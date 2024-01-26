@@ -19,7 +19,6 @@ adminRouter.use(function (req, res, next) {
 
 const adminAuth = require('../middleware/adminAuth')
 const mainController = require('../controller/admin/mainController')
-const dashboardController = require('../controller/admin/dashboardController')
 const adminController = require('../controller/admin/login&signupController')
 const userController = require('../controller/admin/userController')
 const productController = require('../controller/admin/productsController')

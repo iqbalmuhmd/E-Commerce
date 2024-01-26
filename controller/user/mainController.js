@@ -1,16 +1,16 @@
-const Product = require('../../model/productModel');
-const User = require('../../model/userModel');
-const Category = require('../../model/categoryModel');
-const mongoose = require('mongoose');
+const Product = require("../../model/productModel");
+const User = require("../../model/userModel");
+const Category = require("../../model/categoryModel");
+const mongoose = require("mongoose");
 
 const loadShop = async (req, res) => {
   try {
-    const user = await User.findById(req.session.user_id)
+    const user = await User.findById(req.session.user_id);
     const { query, category } = req.query;
     let queryFilters = {};
 
     if (query) {
-      queryFilters.productName = new RegExp(`${query}`, 'i');
+      queryFilters.productName = new RegExp(`${query}`, "i");
     }
 
     if (category) {
@@ -18,24 +18,23 @@ const loadShop = async (req, res) => {
       queryFilters.category = mongooseObjectId;
     }
 
-    const products = await Product.find(queryFilters).populate('category');
+    const products = await Product.find(queryFilters).populate("category");
     const categories = await Category.find();
-    
-    res.render('user/shop', {
+
+    res.render("user/shop", {
       products,
       user,
       searchQuery: query,
       selectedCategory: category,
       categories,
     });
-    
   } catch (error) {
     console.log(error.message);
   }
 };
 
 const loadproductDetail = async (req, res) => {
-  try {
+  try {    
     const user = await User.findById(req.session.user_id);
     const productIdToCheck = req.query.id;
 
@@ -44,16 +43,19 @@ const loadproductDetail = async (req, res) => {
       cart: { $elemMatch: { product: productIdToCheck } },
     });
 
-    const product = await Product.findById(productIdToCheck);
+    const product = await Product.findById(productIdToCheck).populate({
+      path: "rating.customer",
+      model: "User",
+    });
 
     if (check) {
-      res.render('user/productDetail', {
+      res.render("user/productDetail", {
         product,
         user,
-        message: 'already exist in a cart',
+        message: "already exist in a cart",
       });
     } else {
-      res.render('user/productDetail', { product, user, message: '' });
+      res.render("user/productDetail", { product, user, message: "" });
     }
   } catch (error) {
     console.log(error.message);
@@ -63,8 +65,10 @@ const loadproductDetail = async (req, res) => {
 const loadWishlist = async (req, res) => {
   try {
     const user = await User.findById(req.session.user_id);
-    const userData = await User.findById(req.session.user_id).populate('wishlist.product');
-    res.render('user/wishlist', { userData, user });
+    const userData = await User.findById(req.session.user_id).populate(
+      "wishlist.product"
+    );
+    res.render("user/wishlist", { userData, user });
   } catch (error) {
     console.log(error.message);
   }
@@ -84,15 +88,15 @@ const addToWishlist = async (req, res) => {
     userData.wishlist.push(obj);
     await userData.save();
 
-    const referer = req.get('Referer');
+    const referer = req.get("Referer");
     let redirectUrl;
 
-    if (referer && referer.includes('/productDetail')) {
+    if (referer && referer.includes("/productDetail")) {
       redirectUrl = `/productDetail?id=${productData._id}`;
-    } else if (referer && referer.includes('/shop')) {
-      redirectUrl = '/shop';
+    } else if (referer && referer.includes("/shop")) {
+      redirectUrl = "/shop";
     } else {
-      redirectUrl = '/home';
+      redirectUrl = "/home";
     }
 
     res.redirect(redirectUrl);
@@ -116,12 +120,15 @@ const addToCartWL = async (req, res) => {
 
     const totalCartAmt = userData.totalCartAmount + productData.price;
 
-    await User.updateOne({ _id: req.session.user_id }, { $set: { totalCartAmount: totalCartAmt } });
+    await User.updateOne(
+      { _id: req.session.user_id },
+      { $set: { totalCartAmount: totalCartAmt } }
+    );
 
     userData.cart.push(obj);
     await userData.save();
 
-    res.redirect('/wishlist');
+    res.redirect("/wishlist");
   } catch (error) {
     console.log(error.message);
   }
@@ -134,20 +141,22 @@ const deleteWishlist = async (req, res) => {
     const wishlistId = req.query.wishlistId;
     const productData = await Product.findById(wishlistId);
 
-    const itemIndex = userData.wishlist.findIndex(item => item._id.toString() === wishlistId);
+    const itemIndex = userData.wishlist.findIndex(
+      (item) => item._id.toString() === wishlistId
+    );
 
     userData.wishlist.splice(itemIndex, 1);
     await userData.save();
 
-    const referer = req.get('Referer');
+    const referer = req.get("Referer");
     let redirectUrl;
 
-    if (referer && referer.includes('/home')) {
-      redirectUrl = '/home';
-    } else if (referer && referer.includes('/shop')) {
-      redirectUrl = '/shop';
-    } else if (referer && referer.includes('/wishlist')) {
-      redirectUrl = '/wishlist';
+    if (referer && referer.includes("/home")) {
+      redirectUrl = "/home";
+    } else if (referer && referer.includes("/shop")) {
+      redirectUrl = "/shop";
+    } else if (referer && referer.includes("/wishlist")) {
+      redirectUrl = "/wishlist";
     } else {
       redirectUrl = `/productDetail?id=${productData._id}`;
     }
@@ -163,7 +172,7 @@ const loadWallet = async (req, res) => {
     const user = await User.findById(req.session.user_id);
     user.wallet.transactions.sort((a, b) => b.timestamp - a.timestamp);
 
-    res.render('user/wallet', { user });
+    res.render("user/wallet", { user });
   } catch (error) {
     console.log(error.message);
   }

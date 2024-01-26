@@ -124,5 +124,10 @@ userRouter.get('/wallet', userAuth.isLogin, mainController.loadWallet)
 userRouter.get('/coupon', userAuth.isLogin, checkoutController.getCoupons)
 userRouter.post('/apply-coupon', userAuth.isLogin, checkoutController.applyCoupon)
 
+//Referral
+userRouter.post('/generateReferralCode', userAuth.isLogin, profileController.generateCode)
+
+userRouter.post('/submitReview', userAuth.isLogin, orderController.submitReview)
+
 
 module.exports = userRouter

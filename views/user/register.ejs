@@ -34,6 +34,11 @@
         <div class="form-container">
             <h2>Register</h2>
             <form id="registrationForm" action="/register" method="post" onsubmit="return validateForm()">
+                <div style="text-align: center; margin-top: 20px;">
+                    <label for="referralCode" style="font-size: 16px; color: #333; font-weight: bold;">Referral Code:</label>
+                    <br>
+                    <input type="text" name="referralCode" placeholder="Enter the referral code here" style="padding: 8px; font-size: 14px; border: 1px solid #ccc;">
+                  </div>
                 <div class="form-group">
                     <label for="name">Name</label>
                     <input type="text" class="form-control" id="name" name="name" required>
@@ -58,7 +63,7 @@
                     <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
                     <span id="confirmPasswordError" style="color: #c00; font-weight: bold;"></span>
                 </div>
-                <button type="submit" class="btn btn-primary btn-block">Register</button>
+                <button type="submit" class="btn btn-primary btn-block">Register</button>                                  
             </form>
         </div>
     </div>

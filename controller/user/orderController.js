@@ -107,10 +107,50 @@ const returnProduct = async (req, res) => {
     }
 };
 
+const submitReview = async (req, res) => {
+
+    let product = await Product.findOne({ _id: req.body.productId }).populate({
+        path: 'rating.customer',
+        model: 'User'
+    });
+
+    console.log(product.rating[0].customer);
+      
+    try {
+      const user = await User.findOne({ _id: req.session.user_id });
+    
+      const newRating = req.body.rating;
+      const newReview = req.body.review;
+  
+      const existingRating = product.rating.find(
+        (rating) => rating.customer.equals(user._id)
+      );
+  
+      if (existingRating) {
+  
+        existingRating.rate = newRating;
+        existingRating.review = newReview;
+      } else {
+  
+        product.rating.push({
+          customer:user._id,
+          rate: newRating,
+          review: newReview,
+        });
+      }
+      await product.save();
+  
+      res.redirect('/orders');
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+
 module.exports = {
     loadOrderSuccess,
     loadOrders,
     loadOrdersHistory,
     cancelProduct,
-    returnProduct,    
+    returnProduct,  
+    submitReview  
 };

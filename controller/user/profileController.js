@@ -348,6 +348,33 @@ const deleteAddress = async (req, res) => {
   }
 };
 
+const generateCode = async (req, res) => {
+  try {
+    const length = 10;
+    const characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let randomCode = "";
+
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      randomCode += characters.charAt(randomIndex);
+    }
+
+    const findUser = await User.findById(req.session.user_id);
+    findUser.referralCode = randomCode;
+    if (findUser) {            
+      await findUser.save();
+
+      return res.redirect("/profile");
+    } else {      
+      return res.redirect("/login");
+    }
+  } catch (error) {
+    console.error(error.message);        
+  }
+};
+
+
 module.exports = {
   loadProfile,
   updateProfilePhoto,
@@ -363,4 +390,5 @@ module.exports = {
   loadEditAddress,
   editAddress,
   deleteAddress,
+  generateCode
 };
