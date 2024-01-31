@@ -55,14 +55,14 @@ adminRouter.get('/category/delete-category', adminAuth.adminLogin, categoryContr
 
 
 // Products
-adminRouter.get('/products', adminAuth.adminLogin, productController.loadProducts);
-adminRouter.get('/products/add-product', adminAuth.adminLogin, productController.loadAddProduct);
-adminRouter.post('/products/add-product', adminAuth.adminLogin, imageUpload.uploadProductImages, imageUpload.resizeProductImages, productController.addProductPost);
-adminRouter.get('/products/block-product', adminAuth.adminLogin, productController.blockProduct);
-adminRouter.get('/products/edit-product', adminAuth.adminLogin, productController.loadEditProduct);
-adminRouter.post("/products/:id/img/delete", adminAuth.adminLogin, productController.destroyProductImage);
-adminRouter.post('/products/:id/img/add', adminAuth.adminLogin, imageUpload.uploadProductImages, imageUpload.resizeProductImages, productController.updateProductImages);
-adminRouter.post('/products/edit-product', adminAuth.adminLogin, productController.editProduct);
+adminRouter.get('/products',  productController.loadProducts);
+adminRouter.get('/products/add-product',  productController.loadAddProduct);
+adminRouter.post('/products/add-product',  imageUpload.uploadProductImages, imageUpload.resizeProductImages, productController.addProductPost);
+adminRouter.get('/products/block-product',  productController.blockProduct);
+adminRouter.get('/products/edit-product',  productController.loadEditProduct);
+adminRouter.delete("/products/:id/img/delete",  productController.destroyProductImage);
+adminRouter.patch('/products/:id/img/add',  imageUpload.uploadProductImages, imageUpload.resizeProductImages, productController.updateProductImages);
+adminRouter.post('/products/edit-product',  productController.editProduct);
 
 //Orders
 adminRouter.get('/orders', adminAuth.adminLogin, orderController.loadOrders)
@@ -82,6 +82,9 @@ adminRouter.post('/sales-report', mainController.loadSalesReport)
 //Referral
 adminRouter.get('/referral', adminAuth.adminLogin, referralController.loadReferral)
 adminRouter.post('/addReferral', adminAuth.adminLogin, referralController.addReferral)
+
+//Logout
+adminRouter.post('/logout', adminAuth.adminLogin, adminController.logout)
 
 
 module.exports = adminRouter

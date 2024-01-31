@@ -12,14 +12,14 @@
             <form class="forms-sample" method="post" action="/admin/category/edit-category">
               <div class="form-group">
                 <label for="exampleInputName1">Category name</label>
-                <input type="hidden" name="id" value="<%= category._id %>"/>
+                <input type="hidden" name="id" value="<%= categoryData._id %>"/>
                 <input
                   type="text"
                   class="form-control"
                   id="exampleInputName1"
                   name="categoryName"
                   placeholder="Category Name"
-                  value="<%= category.category %>"
+                  value="<%= categoryData.category %>"
                 />
                 <label for="exampleInputName1">Offer</label>
                 <input
@@ -28,7 +28,7 @@
                   id="exampleInputOffer"
                   name="offer"
                   placeholder="Offer in percentage"
-                  value="<%=category.offer%>"
+                  value="<%=categoryData.offer%>"
                 />
                 <div class="text-center mt-2" style="font-weight: bold;">
                   <% if (typeof error !== 'undefined') { %>

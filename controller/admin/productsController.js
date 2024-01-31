@@ -26,49 +26,29 @@ const addProductPost = async (req, res) => {
     const { productName, category, quantity, description, price } = req.body;
     const imagesWithPath = req.body.images.map(img => '/products/' + img);
     
+    const productOffer = req.body.offer
     const catOff = await Category.findById(category);
-      if (!catOff.offer) {
-        if (!req.body.offer) {
-          var offer = 0;
-          var offerPrice = 0;
-        } else {
-          var offerPrice = Math.round(
-            req.body.price - (req.body.price * req.body.offer) / 100
-          );
-  
-          var offer = req.body.offer;
-        }
+      if (productOffer >= catOff.offer) {
 
     const newProduct = new Product({
       productName: productName,
       description: description,
       quantity: quantity,
       price: price,
-      offer: offer,
-      offerPrice: offerPrice,
+      offer: productOffer,      
       category: category,
       images: imagesWithPath
     });
     await newProduct.save();
     res.redirect("/admin/products");
   } else{
-    if (catOff.offer <= 0) {
-      var offer = 0;
-      var offerPrice = 0;
-    } else {
-      var offerPrice = Math.round(
-        req.body.price - (req.body.price * catOff.offer) / 100
-      );
-
-      var offer = catOff.offer;
-    }
+   
     const newProduct = new Product({
       productName: productName,
       description: description,
       quantity: quantity,
       price: price,
-      offer: offer,
-      offerPrice: offerPrice,
+      offer: catOff,
       category: category,
       images: imagesWithPath
     });
@@ -102,6 +82,15 @@ const loadEditProduct = async (req, res) => {
 
 const editProduct = async (req, res) => {
   try {
+
+    const productOffer = req.body.offer
+    const catOff = await Category.findById(req.body.category);
+    var proOffer = 0;
+      if (productOffer >= catOff.offer) {
+      proOffer = productOffer
+      }else{
+        proOffer = catOff.offer
+      }      
     await Product.updateOne(
       { _id: req.body.id },
       {
@@ -111,12 +100,13 @@ const editProduct = async (req, res) => {
           price: req.body.price,
           description: req.body.description,
           quantity: req.body.quantity,
+          offer: proOffer
         },
       }
     );
     res.redirect("/admin/products");
   } catch (error) {
-    console.log.error(error.message);
+    console.log(error.message);
   }
 };
 

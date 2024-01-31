@@ -42,10 +42,7 @@ const productSchema = new mongoose.Schema({
   offer: {
     type: Number,
     default: 0
-  },
-  offerPrice: {
-    type: Number
-  },
+  },  
   blocked: {
     type: Boolean,
     default: false,

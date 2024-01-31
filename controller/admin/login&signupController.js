@@ -32,9 +32,9 @@ const verifyLogin = async (req, res) => {
 const logout = async (req, res) => {
   try {
     req.session.destroy();
-    res.redirect("/admin");
+    res.redirect('/admin/login');
   } catch (error) {
-    res.render("error/internalError", { error });
+    console.log(error.message);
   }
 };
 

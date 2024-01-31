@@ -21,16 +21,22 @@ const loadAddCategory = async (req, res) => {
 const addCategory = async (req, res) => {
   try {
     const categoryName = req.body.categoryName.trim();
+    const offer = parseInt(req.body.offer, 10); // Parse offer as an integer
 
-    if (categoryName === '') {
-      return res.render('admin/add-category', { error: 'Please enter a Non-Empty Category name' });
+    // Define a regular expression for valid category names
+    const validCategoryNameRegex = /^[a-zA-Z0-9_ ]+$/;
+
+    if (categoryName === '' || !validCategoryNameRegex.test(categoryName)) {
+      return res.render('admin/add-category', { error: 'Please enter a valid category name with alphanumeric characters, spaces, and underscores only' });
+    } else if (isNaN(offer) || offer < 0 || offer > 100) {
+      return res.render('admin/add-category', { error: 'Please enter a valid offer percentage between 0 and 100' });
     } else {
       const check = await Category.findOne({ category: { $regex: new RegExp(`^${categoryName}$`, "i") } });
 
       if (check) {
         res.render('admin/add-category', { error: 'Category already exists' });
       } else {
-        const category = await Category.create({ category: categoryName, offer: req.body.offer });
+        const category = await Category.create({ category: categoryName, offer: offer });
 
         if (category) {
           return res.render('admin/add-category', { success: 'Category added Successfully' });
@@ -48,40 +54,37 @@ const editCategory = async (req, res) => {
   try {
     const id = req.query.id;
     const categoryData = await Category.findById(id);
-    res.render('admin/editCategory', { category: categoryData });
+    res.render('admin/editCategory', { categoryData });
   } catch (error) {
     console.log(error.message);
   }
 };
 
 const postEditCategory = async (req, res) => {
-  try {
-    const catName = req.body.categoryName;
-    const catOffer = req.body.offer;
+  try {    
+    const categoryName = req.body.categoryName.trim();
+    const offer = parseInt(req.body.offer, 10);
     const id = req.body.id;
-    var offerPrice = 0;
+    const categoryData = await Category.findById(id)
+    
+    const validCategoryNameRegex = /^[a-zA-Z0-9_ ]+$/;
 
-    const pp = await Product.find({ category: id });
-    console.log(`pp is : ${pp}`);
-    console.log(pp);
+    if (categoryName === '' || !validCategoryNameRegex.test(categoryName)) {
+      return res.render('admin/editCategory', { error: 'Please enter a valid category name with alphanumeric characters, spaces, and underscores only', categoryData });
+    } else if (isNaN(offer) || offer < 0 || offer > 100) {
+      return res.render('admin/editCategory', { error: 'Please enter a valid offer percentage between 0 and 100', categoryData });
+    } else {
+      const check = await Category.findOne({ category: { $regex: new RegExp(`^${categoryName}$`, "i"), $ne: categoryData.category } });
 
-    for (let i = 0; i < pp.length; i++) {
-      offerPrice = Math.round(
-        pp[i].price - (pp[i].price * req.body.offer) / 100
-      );
-
-      await Product.updateOne(
-        { category: id, productName: pp[i].productName },
-        { $set: { offerPrice: offerPrice, offer: catOffer } }
-      );
-    }    
-
-    await Category.updateOne(
-      { _id: id },
-      { $set: { name: catName, offer: catOffer } }
-    );
-
-    return res.redirect('/admin/category');
+      if (check) {
+        res.render('admin/editCategory', { error: 'Category already exists' , categoryData});
+      } else {
+        const category = await Category.updateOne({_id: id}, {category: categoryName, offer: offer});       
+        if(category){
+          return res.redirect('/admin/category')
+        }   
+      }
+    }     
   } catch (error) {
     console.log(error.message);
   }

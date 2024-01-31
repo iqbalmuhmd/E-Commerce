@@ -66,7 +66,7 @@
             <div class="form-group">
               <label for="exampleInputPassword4">Price</label>
               <input
-                type="text"
+                type="number"
                 name="price"
                 class="form-control"
                 id="exampleInputPassword4"
@@ -78,7 +78,7 @@
             <div class="form-group">
               <label for="exampleInputPassword4">Offer in Percentage</label>
               <input
-                type="text"
+                type="number"
                 name="offer"
                 class="form-control"
                 id="exampleInputPassword5"
@@ -173,4 +173,101 @@
           }
       }
   }
+</script>
+
+<!-- Add this script at the end of your HTML body or in a separate JavaScript file -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const addProductForm = document.getElementById('addProductForm');
+    
+    addProductForm.addEventListener('submit', function (event) {
+      // Clear existing error messages
+      clearErrors();
+
+      // Validation for Product Name
+      const productNameInput = addProductForm.querySelector('[name="productName"]');
+      const productNameValue = productNameInput.value;
+      if (!isValidName(productNameValue)) {
+        event.preventDefault();
+        displayError(productNameInput, 'Product Name is not valid.');
+      }
+
+      // Validation for Description
+      const descriptionInput = addProductForm.querySelector('[name="description"]');
+      const descriptionValue = descriptionInput.value;
+      if (!isValidDescription(descriptionValue)) {
+        event.preventDefault();
+        displayError(descriptionInput, 'Description should be at least 8 characters long and at most 109 characters.');
+      }
+
+      // Validation for Offer
+      const offerInput = addProductForm.querySelector('[name="offer"]');
+      const offerValue = offerInput.value;
+      if (!isValidOffer(offerValue)) {
+        event.preventDefault();
+        displayError(offerInput, 'Offer should be between 1 and 95.');
+      }
+
+      // Validation for Quantity
+      const quantityInput = addProductForm.querySelector('[name="quantity"]');
+      const quantityValue = quantityInput.value;
+      if (!isValidQuantity(quantityValue)) {
+        event.preventDefault();
+        displayError(quantityInput, 'Quantity should be greater than 0.');
+      }
+
+      // Validation for Price
+      const priceInput = addProductForm.querySelector('[name="price"]');
+      const priceValue = priceInput.value;
+      if (!isValidPrice(priceValue)) {
+        event.preventDefault();
+        displayError(priceInput, 'Price should be greater than 0.');
+      }
+
+      // Additional validations for other fields can be added similarly
+    });
+
+    function isValidName(name) {
+      // Add your custom validation logic for the product name
+      return /^[a-zA-Z\s]+$/.test(name);
+    }
+
+    function isValidDescription(description) {
+      // Add your custom validation logic for the description length
+      return description.length >= 8 && description.length <= 109;
+    }
+
+    function isValidOffer(offer) {
+      // Add your custom validation logic for the offer range
+      return offer >= 1 && offer <= 95;
+    }
+
+    function isValidQuantity(quantity) {
+      // Add your custom validation logic for the quantity
+      return quantity > 0;
+    }
+
+    function isValidPrice(price) {
+      // Add your custom validation logic for the price
+      return price > 0;
+    }
+
+    function displayError(inputElement, errorMessage) {
+      // Display error message under the form
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'text-danger';
+      errorDiv.textContent = errorMessage;
+
+      const parentDiv = inputElement.parentElement;
+      parentDiv.appendChild(errorDiv);
+    }
+
+    function clearErrors() {
+      // Clear existing error messages
+      const errorMessages = document.querySelectorAll('.text-danger');
+      errorMessages.forEach((errorMessage) => {
+        errorMessage.remove();
+      });
+    }
+  });
 </script>
