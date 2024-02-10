@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Change Password</title>
+
+  <!-- Add your existing stylesheets or CDN links here -->
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    section {
+      background-color: #fff;
+      padding: 75px 0;
+      margin-top: -50px;
+    }
+
+    .container {
+      margin-top: 40px;
+    }
+
+    .flex-grow-1 {
+      flex-grow: 1;
+    }
+
+    h4 {
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .mb-4 {
+      margin-bottom: 1rem !important;
+    }
+
+    .form-label {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .form-control {
+      border-radius: 4px;
+      border: 1px solid #ced4da;
+      height: calc(1.5em + 1rem + 2px);
+      padding: .375rem .75rem;
+      font-size: 1rem;
+    }
+
+    .input-group-append {
+      cursor: pointer;
+    }
+
+    .btn-success {
+      color: #fff;
+      background-color: #28a745;
+      border-color: #28a745;
+    }
+
+    #validationMessages {
+      display: none;
+    }
+
+    .btn-back-to-top {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: none;
+      background-color: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+    }
+
+    #myBtn .symbol-btn-back-to-top {
+      font-size: 24px;
+      line-height: 40px;
+    }
+
+    /* Add your existing styles here */
+
+  </style>
+</head>
+
+<body>
+
+  <section class="bg0 p-t-75 p-b-120" style="margin-top: -50px;">
+    <div class="container" style="margin-top: 40px;">
+      <div class="container-xxl flex-grow-1 container-p-y">
+        <h4 class="fw-bold mb-4">Change Password</h4>
+
+        <div class="row justify-content-center">
+          <div class="col-lg-8">
+            <a class="btn btn-secondary mb-3" href="/profile" role="button">Back to Profile</a>
+            <div class="card mb-4">
+              <div style="text-align: center; margin-top: 10px;">
+                <% if (typeof message !== "undefined") { %>
+                  <span style="color: green; font-weight: bold;">
+                    <%= message %>
+                  </span>
+                <% } %>
+                <% if (typeof error !== "undefined") { %>
+                  <span style="color: #f00; font-weight: bold;">
+                    <%= error %>
+                  </span>
+                <% } %>
+              </div>
+
+              <div class="card-body">
+                <form method="post" action="/forgot-password" onsubmit="return validateForm()">
+                  <input type="hidden" name="id" value="<%= userId %>">
+                  <div id="validationMessages" class="alert alert-danger" style="display: none;"></div>
+
+                  <!-- New Password -->
+                  <div class="mb-4">
+                    <label class="form-label" for="newPassword">New password</label>
+                    <div class="input-group">
+                      <input type="password" class="form-control" placeholder="Enter New Password" name="newPassword"
+                        id="newPassword" required>
+                      <div class="input-group-append" onclick="togglePassword('newPassword')">
+                        <span class="input-group-text">
+                          <i class="far fa-eye" id="toggleNewPassword"></i>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Confirm New Password -->
+                  <div class="mb-4">
+                    <label class="form-label" for="confirmPassword">Confirm new password</label>
+                    <div class="input-group">
+                      <input type="password" class="form-control" placeholder="Enter New Confirm Password"
+                        name="confirmPassword" id="confirmPassword" required>
+                      <div class="input-group-append" onclick="togglePassword('confirmPassword')">
+                        <span class="input-group-text">
+                          <i class="far fa-eye" id="toggleConfirmPassword"></i>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="text-end">
+                    <button type="submit" class="btn btn-success">Change password</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="btn-back-to-top" id="myBtn">
+    <span class="symbol-btn-back-to-top">
+      <i class="zmdi zmdi-chevron-up"></i>
+    </span>
+  </div>
+
+  <!-- Script tags -->
+
+  <script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+  <script src="vendor/animsition/js/animsition.min.js"></script>
+  <script src="vendor/bootstrap/js/popper.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+  <script src="vendor/select2/select2.min.js"></script>
+  <script>
+    $(".js-select2").each(function () {
+      $(this).select2({
+        minimumResultsForSearch: 20,
+        dropdownParent: $(this).next('.dropDownSelect2')
+      });
+    })
+  </script>
+  <script src="vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
+  <script src="vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+  <script>
+    $('.js-pscroll').each(function () {
+      $(this).css('position', 'relative');
+      $(this).css('overflow', 'hidden');
+      var ps = new PerfectScrollbar(this, {
+        wheelSpeed: 1,
+        scrollingThreshold: 1000,
+        wheelPropagation: false,
+      });
+
+      $(window).on('resize', function () {
+        ps.update();
+      })
+    });
+  </script>
+  <script src="js/main.js"></script>
+
+  <script>
+    function togglePassword(inputId) {
+      const input = document.getElementById(inputId);
+      const toggleIcon = document.getElementById(`toggle${inputId}`);
+
+      if (input.type === "password") {
+        input.type = "text";
+        toggleIcon.classList.remove("far", "fa-eye");
+        toggleIcon.classList.add("far", "fa-eye-slash");
+      } else {
+        input.type = "password";
+        toggleIcon.classList.remove("far", "fa-eye-slash");
+        toggleIcon.classList.add("far", "fa-eye");
+      }
+    }
+
+    function showValidationMessage(message) {
+      const validationMessages = document.getElementById("validationMessages");
+      validationMessages.innerHTML = message;
+      validationMessages.style.display = "block";
+    }
+
+    function validateForm() {
+      const newPassword = document.getElementById("newPassword").value;
+      const confirmPassword = document.getElementById("confirmPassword").value;
+
+      if (newPassword.length < 8 || !/[0-9]/.test(newPassword) || !/[!@#$%^&*]/.test(newPassword) || /\s/.test(newPassword)) {
+        showValidationMessage("New password must be at least 8 characters long and contain at least one number, one symbol, and no white spaces.");
+        return false;
+      }
+
+      if (newPassword !== confirmPassword) {
+        showValidationMessage("New password and confirm password do not match.");
+        return false;
+      }
+
+      return true;
+    }
+  </script>
+
+</body>
+
+</html>

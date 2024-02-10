@@ -25,9 +25,9 @@
                                             </div>
                                             <div class="product__cart__item__text">
                                                 <h6><%= userData.cart[i].product.productName %></h6>                                                
-                                                <% if (userData.cart[i].product.offerPrice > 0) { %>
+                                                <% if (userData.cart[i].product.offer > 0) { %>
                                                     <h5>
-                                                      <s style="color: #fa4251; font-size: smaller">₹<%= userData.cart[i].product.price %></s> ₹<%= userData.cart[i].product.offerPrice %>
+                                                      <s style="color: #fa4251; font-size: smaller">₹<%= userData.cart[i].product.price %></s> ₹<%= Math.round(userData.cart[i].product.price - (userData.cart[i].product.price * userData.cart[i].product.offer) /100) %>
                                                     </h5>
                                                   <% } else { %>
                                                     <h5>₹<%= userData.cart[i].product.price %></h5>
@@ -69,14 +69,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4">
-                <div class="cart__discount">
-                    <h6>Discount codes</h6>
-                    <form action="#">
-                        <input type="text" placeholder="Coupon code">
-                        <button type="submit">Apply</button>
-                    </form>
-                </div>
+            <div class="col-lg-4">                
                 <div class="cart__total">
                     <h6>Cart total</h6>
                     <ul>

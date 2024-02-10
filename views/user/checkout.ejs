@@ -158,7 +158,15 @@
                                             <td><img src="<%= user.cart[i].product.images[0] %>" alt="" style="width: 50px; height: 50px;"></td>
                                             <td><%= user.cart[i].product.productName.split(' ').slice(0, 2).join(' ') %></td>
                                             <td><%= user.cart[i].quantity %></td>
-                                            <td>₹<%= user.cart[i].quantity * user.cart[i].product.price %></td>
+                                            <% if(user.cart[i].product.offer!==null&&user.cart[i].product.offer!==0){ %>   
+                                                <td>
+                                                    <h8>
+                                                        <s style="font-size: smaller">₹<%= user.cart[i].product.price %></s> ₹<%= Math.round(user.cart[i].product.price - (user.cart[i].product.price * user.cart[i].product.offer) /100) %>
+                                                    </h8>                                                                         
+                                                    <%  }else{ %>
+                                                        <td>₹<%= user.cart[i].quantity * user.cart[i].product.price %></td>
+                                                <% } %>
+                                                </td>                                                                                                                                 
                                         </tr>
                                     <% } %>
                                 <% } %>

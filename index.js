@@ -8,8 +8,10 @@ const app = express()
 app.use(express.static('public'))
 
 const mongoose = require('mongoose')
-mongoose.connect('mongodb://127.0.0.1:27017/Male-Fashion')
-
+mongoose.connect('mongodb+srv://malefashion:Malefashion@malefashion.zselhfu.mongodb.net/?retryWrites=true&w=majority')
+mongoose.connection.once('open', () => {
+    console.log('MongoDB Connected');
+});
 app.use(session({
     secret: 'thisismysecret',
     resave: false, 

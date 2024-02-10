@@ -10,9 +10,22 @@ const loadCart = async (req, res) => {
     try {
         const user = await User.findById(req.session.user_id);
         const userData = await User.findById(req.session.user_id).populate('cart.product');
+
+        // Assuming each item in the cart has a reference to the product and quantity
+        for (const cartItem of userData.cart) {
+            const product = await Product.findById(cartItem.product._id);
+
+            if (product.offer > 0) {                
+                cartItem.price = Math.round(product.price - (product.price * product.offer) / 100);
+            } else {
+                cartItem.price = product.price;
+            }
+        }        
+        await user.save();
+
         res.render('user/cart', { user, userData });
     } catch (error) {
-        console.log(error.message);
+        console.log(error.message);    
     }
 };
 
@@ -21,8 +34,8 @@ const addToCart = async (req, res) => {
         const productId = req.query.id;
         const productData = await Product.findById(productId);
         let total = 0
-        if(productData.offerPrice > 0){
-            total = productData.offerPrice
+        if(productData.offer > 0){
+            total = Math.round(productData.price - (productData.price * productData.offer) /100)
         } else{
             total = productData.price
         }
@@ -79,7 +92,7 @@ const updateCartItem = async (req, res) => {
         for (const item of currentUser.cart) {
           const currentProduct = await Product.findById(item.product);
           if (currentProduct.offer > 0) {
-            item.total = item.quantity * currentProduct.offerPrice;
+            item.total = item.quantity * Math.round(currentProduct.price - (currentProduct.price * currentProduct.offer) /100)
           } else {
             item.total = item.quantity * currentProduct.price;
           }
@@ -87,7 +100,7 @@ const updateCartItem = async (req, res) => {
   
         const grandTotal = currentUser.cart.reduce((total, element) => {
           if (element.product.offer > 0) {
-            return total + element.quantity * element.product.offerPrice;
+            return total + element.quantity * Math.round(element.product.price - (element.product.price * element.product.offer) /100)
           } else {
             return total + element.quantity * element.product.price;
           }
@@ -97,7 +110,7 @@ const updateCartItem = async (req, res) => {
   
         const totalPrice =
           product.offer > 0
-            ? product.offerPrice * cartItem.quantity
+            ? Math.round(product.price - (product.price * product.offer) /100) * cartItem.quantity
             : product.price * cartItem.quantity;
   
         await currentUser.save();
@@ -404,18 +417,20 @@ const getCoupons = async (req, res) => {
     }
 };
 
-const applyCoupon = async(req, res) => {
+const applyCoupon = async (req, res) => {
     try {
-        const user1 = await User.findById(req.session.user_id)
+        const user1 = await User.findById(req.session.user_id);
         const user = await User.findById(req.session.user_id).populate('earnedCoupons.coupon');
         await user.populate('cart.product');
         await user.populate('cart.product.category');
         const cartProducts = user.cart;
-        const userAddress = await Address.find({ userId: req.session.user_id });        
+        const userAddress = await Address.find({ userId: req.session.user_id });
         const currentCoupon = await Coupon.findOne({ code: req.body.coupon });
         const grandTotal = cartProducts.reduce((total, element) => {
             return total + element.total;
         }, 0);
+
+        const minimumCartValue = 500; // Set the minimum cart value required to apply the coupon
 
         let couponError = "";
         let discount = 0;
@@ -426,12 +441,12 @@ const applyCoupon = async(req, res) => {
             if (foundCoupon) {
                 if (foundCoupon.coupon.isActive) {
                     if (!foundCoupon.isUsed) {
-                        if (foundCoupon.coupon.discountType === 'fixedAmount') {   
-                            if (foundCoupon.coupon.discountAmount > grandTotal){
-                                couponError = "Your total is less than coupon amount."
+                        if (foundCoupon.coupon.discountType === 'fixedAmount') {
+                            if (foundCoupon.coupon.discountAmount > grandTotal) {
+                                couponError = "Your total is less than coupon amount.";
                             } else {
                                 discount = foundCoupon.coupon.discountAmount;
-                            }                       
+                            }
                         } else {
                             discount = (foundCoupon.coupon.discountAmount / 100) * grandTotal;
                         }
@@ -448,11 +463,17 @@ const applyCoupon = async(req, res) => {
             couponError = "Invalid coupon code.";
         }
 
-        res.render("user/checkout", {             
+        // Check if the grand total meets the minimum cart value requirement
+        if (grandTotal < minimumCartValue) {
+            couponError = `Minimum cart value of ${minimumCartValue} is required to apply the coupon.`;
+            discount = 0; // Reset discount to 0 if the minimum cart value is not met
+        }
+
+        res.render("user/checkout", {
             user: user1,
             user,
             cartProducts,
-            userAddress,            
+            userAddress,
             discount,
             grandTotal,
             currentCoupon: couponError ? '' : currentCoupon._id,
@@ -465,6 +486,7 @@ const applyCoupon = async(req, res) => {
         console.log(error.message);
     }
 }
+
 
 
 module.exports = {

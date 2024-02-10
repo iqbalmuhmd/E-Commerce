@@ -44,9 +44,9 @@
                     <div class="col-lg-8">
                         <div class="product__details__text">
                             <h4><%= product.productName %></h4>
-                            <% if(product.offer!==null&&product.offer!==0&&product.offerPrice>0){ %>    
+                            <% if(product.offer!==null&&product.offer!==0){ %>    
                                 <h3>
-                                    <s style="color: #fa4251; font-size: smaller">₹<%= product.price %></s> ₹<%= product.offerPrice %>
+                                    <s style="color: #fa4251; font-size: smaller">₹<%= product.price %></s> ₹<%= Math.round(product.price - (product.price * product.offer) /100) %>
                                   </h3>                                                                         
                                 <%  }else{ %>
                                     <h3>₹<%= product.price %></h3>

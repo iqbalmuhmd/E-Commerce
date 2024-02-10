@@ -101,7 +101,7 @@ const returnProduct = async (req, res) => {
 
             await user.save();
                 
-        return res.redirect(`order-history`);
+        return res.redirect('/orders');
     } catch (error) {
         console.log(error.message);
     }

@@ -203,36 +203,7 @@
         document.getElementById("content").style.display = "block";
 
       });
-    </script>
-    <!-- <script>
-
-      const downloadExcelLink = document.getElementById('downloadExcelLink');
-
-      downloadExcelLink.addEventListener('click', function (event) {
-        event.preventDefault();
-
-        // Assuming 'salesReport' is a JavaScript object
-        const salesReportData = '<%= (salesReport) %>';
-        console.log(salesReportData[0]);
-
-
-        fetch('/admin/downloadExcel?data=<%= salesReport%>', {
-          method: 'POST',
-          body: salesReportData
-        })
-          .then(response => {
-            if (response.ok) {
-              // Handle success if needed
-              console.log("Success");
-            } else {
-              throw new Error('Failed to download Excel file');
-            }
-          })
-          .catch(error => {
-            console.error('Error downloading Excel file:', error);
-          });
-      });
-    </script> -->
+    </script>    
 
 
     </body>

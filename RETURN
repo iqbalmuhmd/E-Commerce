@@ -1,0 +1,95 @@
+[33mcommit 116c9f6a9e471cee2bffa9e5b57b0361f7c489f4[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: iqbalmuhmd <iqbxlmhd@gmail.com>
+Date:   Wed Jan 31 11:19:48 2024 +0530
+
+    Bug fixes
+
+[33mcommit 286d203f4535f7e9c6b95a5c75ba02ab17111b7e[m
+Author: iqbalmuhmd <iqbxlmhd@gmail.com>
+Date:   Fri Jan 26 12:00:17 2024 +0530
+
+    ReviwRating, PDF&Excel download Added
+
+[33mcommit 4548d7361ebbb756cfcfb8fcb46b73ad26a45064[m
+Author: iqbalmuhmd <iqbxlmhd@gmail.com>
+Date:   Wed Jan 24 15:37:06 2024 +0530
+
+    Dashboard, SalesReport, Offer(Cat,Prod,Ref) Added
+
+[33mcommit 5f2158664d6f93015cda63eb3ef80a424d09eb4c[m
+Author: iqbalmuhmd <iqbxlmhd@gmail.com>
+Date:   Tue Jan 9 13:04:16 2024 +0530
+
+    Coupon Added
+
+[33mcommit a4a63e48ec6821dd389835eedbb0870a0d232b19[m
+Author: iqbalmuhmd <iqbxlmhd@gmail.com>
+Date:   Tue Jan 2 15:15:25 2024 +0530
+
+    Wallet Added
+
+[33mcommit b29a7ec08001ed52b7994d6f09229057f34163f7[m
+Author: iqbalmuhmd <iqbxlmhd@gmail.com>
+Date:   Sun Dec 31 14:35:30 2023 +0530
+
+    Razorpay&Wishlist Added
+
+[33mcommit a387efe2dae385eddaa958799f3747e34910afdc[m
+Author: iqbalmuhmd <iqbxlmhd@gmail.com>
+Date:   Wed Dec 27 12:16:04 2023 +0530
+
+    Order Managment
+
+[33mcommit 48e0a32d2b4f737450d68f5bed1f2845e55ccbda[m
+Author: iqbalmuhmd <iqbxlmhd@gmail.com>
+Date:   Sun Dec 17 19:10:52 2023 +0530
+
+    Place order&Orders,History
+
+[33mcommit cc23b3c0f383d038eda34ce11b87888bd10775c4[m
+Author: iqbalmuhmd <iqbxlmhd@gmail.com>
+Date:   Wed Dec 13 16:09:57 2023 +0530
+
+    Cart Added
+
+[33mcommit aab905e03dc25e6743e152f7075e9f03d1fe1c44[m
+Author: iqbalmuhmd <iqbxlmhd@gmail.com>
+Date:   Tue Dec 12 10:02:53 2023 +0530
+
+    Address Added
+
+[33mcommit f01c880998b40f8295f0c5869ebfe22f42178691[m
+Author: iqbalmuhmd <iqbxlmhd@gmail.com>
+Date:   Mon Dec 11 14:22:36 2023 +0530
+
+    Profile Added
+
+[33mcommit 408c77b2b85f93ce45d635b2c763d38abce1a678[m
+Author: iqbalmuhmd <iqbxlmhd@gmail.com>
+Date:   Sat Dec 9 17:10:49 2023 +0530
+
+    Profile added
+
+[33mcommit 7e0cfa64153dd466ef7161e8187e8de96ac07e7f[m
+Author: iqbalmuhmd <iqbxlmhd@gmail.com>
+Date:   Sat Dec 9 09:13:09 2023 +0530
+
+    Verify User fixed
+
+[33mcommit bb9e9ee34c7d19022382cea3862566cb18e22db5[m
+Author: iqbalmuhmd <iqbxlmhd@gmail.com>
+Date:   Mon Dec 4 17:53:31 2023 +0530
+
+    added product
+
+[33mcommit 3e540fed4e9422fb71f3da9c97d666b905d69343[m
+Author: iqbalmuhmd <iqbxlmhd@gmail.com>
+Date:   Fri Dec 1 10:38:12 2023 +0530
+
+    Category Added, Edit
+
+[33mcommit 4f46b3e750e0c1c1cb88bcec94db57f3c7415786[m
+Author: iqbalmuhmd <iqbxlmhd@gmail.com>
+Date:   Thu Nov 30 10:31:49 2023 +0530
+
+    git initialize

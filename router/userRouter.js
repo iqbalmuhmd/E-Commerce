@@ -43,6 +43,7 @@ userRouter.post('/register', loginSignUpController.insertUser);
 // OTP Verification
 userRouter.get('/verifyOTP', userAuth.isLogout, loginSignUpController.loadOTPpage);
 userRouter.post('/verifyOTP', loginSignUpController.verifyOTPSignup);
+userRouter.get("/resendOTPSignup",userAuth.isLogout, loginSignUpController.resendOTPSignup)
 
 // Logout
 userRouter.get('/logout', loginSignUpController.Logout);
@@ -75,6 +76,15 @@ userRouter.post('/verifyChangeMail', userAuth.isLogin, profileController.verifyO
 // Change Password
 userRouter.get('/change-password', userAuth.isLogin, profileController.loadChangePass);
 userRouter.post('/change-password', userAuth.isLogin, profileController.changePass);
+
+// forgot Password
+userRouter.get('/forgot-password', userAuth.isLogin, profileController.loadForgotPass)
+userRouter.post('/forgot-password', userAuth.isLogin, profileController.loadOTPForgotPass)
+userRouter.get('/verifyOTPForgetPass', userAuth.isLogin, profileController.loadOTPForgetPassPage)
+userRouter.post('/verifyOTPForgetPass', userAuth.isLogin, profileController.verifyOTPForgetPassPage)
+userRouter.get('/forgotPass-OTP', userAuth.isLogin, profileController.loadOTPForgetPassPage)
+userRouter.post('/verifyChangePass', userAuth.isLogin, profileController.verifyOTPForgetPassPage)
+userRouter.post('/forgotPassword', userAuth.isLogin, profileController.forgotPassChange)
 
 // Add Address
 userRouter.get('/add-address', userAuth.isLogin, profileController.loadAddAddress);
